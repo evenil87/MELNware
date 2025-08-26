@@ -1,7 +1,8 @@
 import fs from 'fs';
 import exifr from 'exifr';
 
-let files = fs.readdirSync('./frontend/photos/').filter(x => x.endsWith('.jpg') || x.endsWith('.jpeg'));
+let files = fs.readdirSync('./frontend/photos/')
+  .filter(x => ['.jpg', '.jpeg'].some(ext => x.toLowerCase().endsWith(ext)));
 
 let metadataList = [];
 
@@ -10,9 +11,9 @@ for (let file of files) {
   metadataList.push({ file, metadata });
 }
 
-let json = JSON.stringify(files, null, ' ');
+// <-- Ändra här: använd metadataList istället för files
+let json = JSON.stringify(metadataList, null, 2);
 
 console.log(metadataList);
-console.log(json);
 
 fs.writeFileSync('./metadataphotos.json', json, 'utf-8');
