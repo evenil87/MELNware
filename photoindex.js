@@ -11,7 +11,6 @@ for (let file of files) {
   metadataList.push({ file, metadata });
 }
 
-// <-- Ändra här: använd metadataList istället för files
 let json = JSON.stringify(metadataList, null, 2);
 
 console.log(metadataList);
