@@ -4,6 +4,7 @@ import fs from 'fs';
 import pdfParse from 'pdf-parse-fork';
 // Import express - that will help us create a web server
 import express from 'express';
+import path from 'path';
 
 // Path to pdf folder
 let pathToPdfs = './frontend/pdfs';
