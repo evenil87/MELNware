@@ -2,29 +2,28 @@ import fs from 'fs';
 import mysql from 'mysql2/promise';
 import dbCreds from './db-credentials.js';
 
-// connect to db
+// Connect to a database.
 const db = await mysql.createConnection(dbCreds);
 
-// read all files
-const files = fs.readdirSync('./pp-json');
+// Load the JSON file.
+const raw = fs.readFileSync('./frontend/powerPoint/powerPointJsonCleaned.json', 'utf-8');
+const data = JSON.parse(raw);
 
-// remove all posts from the musicMeta
-await db.execute('DELETE FROM musicMeta');
+// Clear the table first.
+await db.execute('DELETE FROM powerPoint');
 
-for (let file of files) {
-  // get all metadata
-  let metadata = await musicMetadata.parseFile('./frontend/music/' + file);
-  // create cleaned up version with filename + metadata
-  // we want to import mysql
-  let cleaned = { file, common: metadata.common, format: metadata.format };
+for (let metadata of data) {
+  // Metadata is already a finished object from your cleaned file.
 
+  // Save the entire object in the metaPowerPoint column as a JSON string.
   let [result] = await db.execute(`
-    INSERT INTO musicMeta (meta)
+    INSERT INTO powerPoint (metaPowerPoint)
     VALUES(?)
-  `, [cleaned]);
-  console.log(file, result);
+  `, [JSON.stringify(metadata)]);
+
+  console.log('Inserted:', metadata.fileName, result.insertId);
 }
 
-// Exit process when import is done
-console.log('All metadata imported!');
+// Exit process when import is done.
+console.log('Metadata import completed!');
 process.exit();

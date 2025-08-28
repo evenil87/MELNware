@@ -2,7 +2,7 @@
 import fs from 'fs';
 
 // Read JSON from file.
-let json = fs.readFileSync('./powerPointJsonFromCsv.json', 'utf-8');
+let json = fs.readFileSync('./frontend/powerPoint/powerPointJsonFromCsv.json', 'utf-8');
 let data = JSON.parse(json);
 
 // Converts snake_case to camelCase.
@@ -65,6 +65,6 @@ let cleanedData = data.map(powerpointMetadata => {
 });
 
 // Save as new JSON file.
-fs.writeFileSync('./powerPointJsonCleaned.json', JSON.stringify(cleanedData, null, 2), 'utf-8');
+fs.writeFileSync('./frontend/powerPoint/powerPointJsonCleaned.json', JSON.stringify(cleanedData, null, 2), 'utf-8');
 
 console.log('Ny fil sparad som powerPointJsonCleaned.json');
