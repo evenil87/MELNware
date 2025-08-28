@@ -15,3 +15,5 @@ frontend/video
 
 # Ignore specials system files of no use for example .DS_Store on mac
 .DS_Store
+
+notesForMe.md
