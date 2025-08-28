@@ -14,6 +14,7 @@ for (let file of files) {
   let json = JSON.stringify(meta);
 
   let [result] = await database.execute(`
-    INSERT INTO photo (metaPhotos) VALUES (?)`, [file, metadataphotos]);
-  console.log(file, json, result);
+    INSERT INTO photo (metaPhotos) VALUES (?)`, [json]);
+  console.log(file, result);
 }
+process.exit();
