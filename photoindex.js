@@ -7,7 +7,7 @@ let files = fs.readdirSync('./frontend/photos/')
 let metadataList = [];
 
 for (let file of files) {
-  let metadata = await exifr.parse('./frontend/photos/' + file);
+  let metadata = await exifr.parseFile('./frontend/photos/' + file);
   metadataList.push({ file, metadata });
 }
 
