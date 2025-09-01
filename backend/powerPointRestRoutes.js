@@ -9,7 +9,7 @@ export default function setupPowerPointRestRoute(app, db) {
     const validFields = {
       title: '$.title',
       company: '$.company',
-      slidecount: '$.slideCount',
+      slides: '$.slideCount',
       creationDate: '$.creationDate'
     };
 
