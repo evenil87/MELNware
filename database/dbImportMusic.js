@@ -1,7 +1,7 @@
 import fs from 'fs';
 import * as musicMetadata from 'music-metadata';
 import mysql from 'mysql2/promise';
-import dbCredentials from './db-credentials.js';
+import dbCredentials from '../db-credentials.js';
 
 // connect to db
 const db = await mysql.createConnection(dbCredentials);
