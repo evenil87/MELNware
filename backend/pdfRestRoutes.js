@@ -9,17 +9,20 @@ export default function setupPdfRestRoutes(app, db) {
       return;
     }
 
-    const queryPath = field === 'numpages'
-      ? "metaPdf->>'$.numpages'"
-      : `metaPdf->>'$.common.${field}'`;
+    const queryPath =
+      field === 'numpages'
+        ? "metaPdf->>'$.numpages'"
+        : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
+
+
 
     const [result] = await db.execute(`
   SELECT id,
          metaPdf->>'$.file' AS fileName,
-         metaPdf->>'$.common.title' AS title,
-         metaPdf->>'$.common.author' AS author,
-         metaPdf->>'$.common.creator' AS creator,
-         metaPdf->>'$.numpages' AS numpages
+         metaPdf->>'$.info.Title'   AS title,
+         metaPdf->>'$.info.Author'  AS author,
+         metaPdf->>'$.info.Creator' AS creator,
+         metaPdf->>'$.numpages'     AS numpages
   FROM pdf
   WHERE LOWER(${queryPath}) LIKE LOWER(?)
 `, ['%' + searchValue + '%']);

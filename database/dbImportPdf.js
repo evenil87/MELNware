@@ -1,7 +1,7 @@
 import fs from 'fs';
 import mysql from 'mysql2/promise';
 import pdfParse from 'pdf-parse-fork';
-import dbCredentials from './db-credentials.js'; 
+import dbCredentials from '../db-credentials.js'; 
 
 // koppla upp mot databasen
 const db = await mysql.createConnection(dbCredentials);
