@@ -1,6 +1,6 @@
 import fs from 'fs';
 import mysql from 'mysql2/promise';
-import dbCreds from './db-credentials.js';
+import dbCreds from '../db-credentials.js';
 
 // Connect to a database.
 const db = await mysql.createConnection(dbCreds);
