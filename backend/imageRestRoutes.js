@@ -1,4 +1,4 @@
-export default function setupImagesRestRoutes(app, db) {
+export default function setupImageRestRoutes(app, db) {
 
   app.get('/api/images-search/:field/:searchValue', async (req, res) => {
     // get field and searhValue from the request parameters
@@ -13,7 +13,7 @@ export default function setupImagesRestRoutes(app, db) {
   SELECT id,
          metaPhotos->>'$.file' AS fileName,
          metaPhotos->>'$.FileSource'   AS fileSource,
-         metaPhotos->>'$.info.DateTimeOriginal'  AS DateCreated
+         metaPhotos->>'$.info.DateTimeOriginal'  AS CreationDate
   FROM photo
   WHERE LOWER(${queryPath}) LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
@@ -22,7 +22,7 @@ export default function setupImagesRestRoutes(app, db) {
     res.json(result);
   });
 
-  // get all metadata for a single pdf (by id)
+  // get all metadata for a specific image by id
   app.get('/api/images-all-meta/:id', async (req, res) => {
     const { id } = req.params;
     let [result] = await db.execute(`
