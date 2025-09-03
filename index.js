@@ -4,11 +4,10 @@ import express from 'express';
 import dbCreds from './db-credentials.js';
 // Get the database driver.
 import mysql from 'mysql2/promise';
-// Get express so that we can create a web server
-import express from 'express';
+
 // Import rest routes from backend folder.
-import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
-import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
+// import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
+// import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 // import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 import setupImageRestRoutes from './backend/imageRestRoutes.js';
 
@@ -20,8 +19,8 @@ const db = await mysql.createConnection(dbCreds);
 const app = express();
 
 // Add rest routes for music search.
-setupPowerPointRestRoutes(app, db);
-setupPdfRestRoutes(app, db);
+// setupPowerPointRestRoutes(app, db);
+// setupPdfRestRoutes(app, db);
 // setupMusicRestRoutes(app, db);
 setupImageRestRoutes(app, db);
 
