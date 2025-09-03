@@ -10,7 +10,7 @@ export default function setupPowerPointRestRoute(app, db) {
       title: '$.title',
       company: '$.company',
       slides: '$.slideCount',
-      creationDate: '$.creationDate'
+      date: '$.creationDate'
     };
 
     // Check if the provided field is valid.
@@ -28,7 +28,7 @@ export default function setupPowerPointRestRoute(app, db) {
         metaPowerPoint->>'$.company' AS company,
         metaPowerPoint->>'$.original' AS link,
         metaPowerPoint->>'$.slideCount' AS slides,
-        metaPowerPoint->>'$.creationDate' AS created
+        metaPowerPoint->>'$.creationDate' AS date
       FROM powerPoint
       WHERE LOWER(metaPowerPoint->>'${validFields[field]}') LIKE LOWER(?)
     `;
