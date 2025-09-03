@@ -1,5 +1,5 @@
 // Register Rest routes for powerpoint search.
-export default function setupPowerPointRestRoute(app, db) {
+export default function setupPowerPointRestRoutes(app, db) {
   // Search powerpoint by title, company, slidecount or creationDate.
   app.get('/api/powerPoint-search/:field/:searchValue', async (req, res) => {
     // Extract field and searchValue from the request parameters.
