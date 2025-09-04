@@ -1,5 +1,5 @@
-import { startPageContent } from './start-page.js';
-import { musicSearchPageContent } from './music-search.js';
+import { startPageContent } from './startPage.js';
+import { pdfSearchPageContent } from './pdfSearch.js';
 
 // Click on menu link
 document.body.addEventListener('click', event => {
@@ -19,8 +19,8 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Sök musik') {
-    content = musicSearchPageContent();
+  else if (label === 'Search PDF') {
+    content = pdfSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
 }

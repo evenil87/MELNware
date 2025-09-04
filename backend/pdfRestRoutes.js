@@ -4,7 +4,7 @@ export default function setupPdfRestRoutes(app, db) {
     // get field and searhValue from the request parameters
     const { field, searchValue } = req.params;
     // check that field is a valid field, if not do nothing
-    if (!['title', 'author', 'creator', 'numpages'].includes(field)) {
+    if (!['title', 'author', 'creator', 'date', 'numpages'].includes(field)) {
       res.json({ error: 'Invalid field name!' });
       return;
     }
@@ -12,6 +12,8 @@ export default function setupPdfRestRoutes(app, db) {
     const queryPath =
       field === 'numpages'
         ? "metaPdf->>'$.numpages'"
+        : field === 'date'
+        ? "metaPdf->>'$.info.CreationDate'"
         : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
 
 
@@ -22,8 +24,8 @@ export default function setupPdfRestRoutes(app, db) {
          metaPdf->>'$.info.Title'   AS title,
          metaPdf->>'$.info.Author'  AS author,
          metaPdf->>'$.info.Creator' AS creator,
-         metaPdf->>'$.info.CreationDate' AS creationDate,
-         metaPdf->>'$.numpages'     AS numberOfPages
+         metaPdf->>'$.info.CreationDate' AS date,
+         metaPdf->>'$.numpages'     AS pages
   FROM pdf
   WHERE LOWER(${queryPath}) LIKE LOWER(?)
 `, ['%' + searchValue + '%']);

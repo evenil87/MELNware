@@ -1,46 +1,47 @@
-// A function to create the music search page content
-export function musicSearchPageContent() {
+// A function to create the pdf search page content
+export function pdfSearchPageContent() {
   return `
-      <h1>Sök musik</h1>
+      <h1>Search PDF</h1>
       <label>
-        Sök på: <select name="pdf-meta-field">
-          <option value="artist">Author</option>
+        Search for: <select name="pdf-meta-field">
           <option value="title">Title</option>
-          <option value="album">Creator</option>
-          <option value="genre">Genre</option>
+          <option value="author">Author</option>
+          <option value="creator">Creator</option>
+          <option value="date">Date</option>
+          <option value="numpages">Number of pages</option>
         </select>
       </label>
       <label>
-        <input name="music-search" type="text" placeholder="Sök bland musikfiler">
+        <input name="pdf-search" type="text" placeholder="Search">
       </label>
-      <section class="music-search-result"></section>
+      <section class="pdf-search-result"></section>
     `;
 }
 
 
-// Listen to key up events in the music-search input field
+// Listen to key up events in the pdf-search input field
 document.body.addEventListener('keyup', event => {
-  let inputField = event.target.closest('input[name="music-search"]');
+  let inputField = event.target.closest('input[name="pdf-search"]');
   if (!inputField) { return; }
-  musicSearch();
+  pdfSearch();
 });
 
-// Listen to changes to the select/dropdown music meta field
+// Listen to changes to the select/dropdown pdf meta field
 document.body.addEventListener('change', event => {
-  let select = event.target.closest('select[name="music-meta-field"]');
+  let select = event.target.closest('select[name="pdf-meta-field"]');
   if (!select) { return; }
-  musicSearch();
+  pdfSearch();
 });
 
-// event handler to show all metadata for a music file on click
-// on the button btn-show-all-music-metadata
+// event handler to show all metadata for a pdf file on click
+// on the button btn-show-all-pdf-metadata
 document.body.addEventListener('click', async event => {
-  let button = event.target.closest('.btn-show-all-music-metadata');
+  let button = event.target.closest('.btn-show-all-pdf-metadata');
   if (!button) { return; }
-  // if we have clicked a  btn-show-all-music-metadata
+  // if we have clicked a  btn-show-all-pdf-metadata
   let id = button.getAttribute('data-id');
   // fetch detailed metadata
-  let rawResponse = await fetch('/api/music-all-meta/' + id);
+  let rawResponse = await fetch('/api/pdf-all-meta/' + id);
   let result = await rawResponse.json();
   // create a pre element
   let pre = document.createElement('pre');
@@ -50,39 +51,37 @@ document.body.addEventListener('click', async event => {
 });
 
 
-// music search (called on key up in search field and on changes to the select/dropdown)
-async function musicSearch() {
-  let inputField = document.querySelector('input[name="music-search"]');
+// pdf search (called on key up in search field and on changes to the select/dropdown)
+async function pdfSearch() {
+  let inputField = document.querySelector('input[name="pdf-search"]');
   // if empty input field do not search just empty search results
   // if(!inputField.value){
   if (inputField.value === '') {
-    document.querySelector('.music-search-result').innerHTML = '';
+    document.querySelector('.pdf-search-result').innerHTML = '';
     return;
   }
-  // get the chosen field to search for in the meta data
-  let field = document.querySelector(
-    'select[name="music-meta-field"]'
-  ).value;
-  // ask the rest-api (correct rest route) for search results
+  // get the chosen field to search f
+  let field = document.querySelector('select[name="pdf-meta-field"]').value;
+  // ask the rest-api for search results
   let rawResponse = await fetch(
-    `/api/music-search/${field}/${inputField.value}`
+    `/api/pdf-search/${field}/${inputField.value}`
   );
   // unpack search results from json
   let result = await rawResponse.json();
   let resultAsHtml = '';
-  for (let { id, fileName, title, artist, album, genre } of result) {
+  for (let { id, fileName, title, author, creator, date, pages } of result) {
     resultAsHtml += `
-      <article>
-        <h3>${artist || 'Okänd artist'}</h3>
-        <h2>${title || 'Okänd titel'}</h2>
-        <p><b>Från albumet:</b> ${album || 'Okänt album'}</p>
-        <p><b>Genre:</b> ${genre || 'Okänd genre'}</p>
-        <audio controls src="/music/${fileName}"></audio>
-        <p><a href="/music/${fileName}" download>Ladda ned filen</a></p>
-        <p><button class="btn-show-all-music-metadata" data-id="${id}">Visa all metadata</button></p>
-      </article>
-    `;
+    <article>
+      <h2>${title || 'Unknown'}</h2>
+      <p><b>Author:</b> ${author || 'Unknown'}</p>
+      <p><b>Created by:</b> ${creator || 'Unknown'}</p>
+      <p><b>Date:</b> ${date || 'Unknown'}</p>
+      <p><b>Pages:</b> ${pages || 'Unknown'}</p>
+      <p><a href="/pdf/${fileName}" download>Download</a></p>
+      <p><button class="btn-show-all-pdf-metadata" data-id="${id}">Show all metadata</button></p>
+    </article>
+  `;
   }
-  // replace content in the .music-search-result element (a section tag)
-  document.querySelector('.music-search-result').innerHTML = resultAsHtml;
+  // replace content in the .pdf-search-result element (a section tag)
+  document.querySelector('.pdf-search-result').innerHTML = resultAsHtml;
 }
