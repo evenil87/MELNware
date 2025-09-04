@@ -22,7 +22,8 @@ export default function setupPdfRestRoutes(app, db) {
          metaPdf->>'$.info.Title'   AS title,
          metaPdf->>'$.info.Author'  AS author,
          metaPdf->>'$.info.Creator' AS creator,
-         metaPdf->>'$.numpages'     AS numpages
+         metaPdf->>'$.info.CreationDate' AS creationDate,
+         metaPdf->>'$.numpages'     AS numberOfPages
   FROM pdf
   WHERE LOWER(${queryPath}) LIKE LOWER(?)
 `, ['%' + searchValue + '%']);

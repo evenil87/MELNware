@@ -4,8 +4,6 @@ import express from 'express';
 import dbCreds from './db-credentials.js';
 // Get the database driver.
 import mysql from 'mysql2/promise';
-// Get express so that we can create a web server
-import express from 'express';
 // Import rest routes from backend folder.
 import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
