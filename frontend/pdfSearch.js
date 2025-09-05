@@ -3,17 +3,17 @@ export function pdfSearchPageContent() {
   return `
       <h1>Search PDF</h1>
       <label>
-        Search for: <select name="pdf-meta-field">
-          <option value="title">Title</option>
-          <option value="author">Author</option>
-          <option value="creator">Creator</option>
-          <option value="date">Date</option>
-          <option value="numpages">Number of pages</option>
-        </select>
-      </label>
-      <label>
         <input name="pdf-search" type="text" placeholder="Search">
       </label>
+      <button id="toggle-filters">Filter</button>
+      <section id="filters" style="display:none; margin-top:10px;">
+        <label><input type="checkbox" name="field" value="all" checked> All data</label><br>
+        <label><input type="checkbox" name="field" value="title"> Title</label><br>
+        <label><input type="checkbox" name="field" value="author"> Author</label><br>
+        <label><input type="checkbox" name="field" value="creator"> Creator</label><br>
+        <label><input type="checkbox" name="field" value="date"> Date</label><br>
+        <label><input type="checkbox" name="field" value="numpages"> Number of pages</label>
+      </section>
       <section class="pdf-search-result"></section>
     `;
 }
@@ -26,9 +26,10 @@ document.body.addEventListener('keyup', event => {
   pdfSearch();
 });
 
-// Listen to changes to the select/dropdown pdf meta field
+
+// Listen to changes in filters
 document.body.addEventListener('change', event => {
-  let select = event.target.closest('select[name="pdf-meta-field"]');
+  let select = event.target.closest('#filters input[name="field"]');
   if (!select) { return; }
   pdfSearch();
 });
@@ -50,21 +51,37 @@ document.body.addEventListener('click', async event => {
   button.after(pre);
 });
 
+// Toggle filter visibility
+document.body.addEventListener('click', event => {
+  if (event.target.id === 'toggle-filters') {
+    const filters = document.getElementById('filters');
+    if (filters) {
+      filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+});
 
-// pdf search (called on key up in search field and on changes to the select/dropdown)
+// pdf search (called on key up in search field and on changes to the filters)
 async function pdfSearch() {
   let inputField = document.querySelector('input[name="pdf-search"]');
-  // if empty input field do not search just empty search results
-  // if(!inputField.value){
   if (inputField.value === '') {
     document.querySelector('.pdf-search-result').innerHTML = '';
     return;
   }
-  // get the chosen field to search f
-  let field = document.querySelector('select[name="pdf-meta-field"]').value;
+
+  // vilka filter är valda?
+  let selectedFields = [...document.querySelectorAll('#filters input[name="field"]:checked')]
+    .map(cb => cb.value);
+
+  // fallback: om inget är valt, använd "all"
+  let field = 'title';
+  if (selectedFields.length > 0 && !selectedFields.includes('all')) {
+    field = selectedFields[0]; // ta första markerade
+  }
+
   // ask the rest-api for search results
   let rawResponse = await fetch(
-    `/api/pdf-search/${field}/${inputField.value}`
+    `/api/pdf-search/${field}/${encodeURIComponent(inputField.value)}`
   );
   // unpack search results from json
   let result = await rawResponse.json();
