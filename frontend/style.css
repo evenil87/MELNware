@@ -116,3 +116,50 @@ label {
   display: block;
   margin: 20px 0;
 }
+
+.filter-dropdown {
+  position: relative;
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  background: #2f5703;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.filter-menu,
+.filter-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  position: absolute;
+  display: block;
+  z-index: 100;
+}
+
+.filter-menu li,
+.filter-submenu li,
+.filter-submenu option {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.filter-menu li:hover,
+.filter-submenu li:hover {
+  background: #eee;
+}
+
+.filter-submenu {
+  left: 100%;
+  top: 0;
+}
+
+.hidden {
+  display: none;
+}
