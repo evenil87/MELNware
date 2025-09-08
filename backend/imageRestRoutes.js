@@ -4,16 +4,16 @@ export default function setupImageRestRoutes(app, db) {
     // get field and searhValue from the request parameters
     const { field, searchValue } = req.params;
     // check that field is a valid field, if not do nothing
-    if (!['file', 'FileSource', 'DateTimeOriginal'].includes(field)) {
+    if (!['file', 'Make', 'CreateDate'].includes(field)) {
       res.json({ error: 'Invalid field name!' });
       return;
     }
 
     const [result] = await db.execute(`
   SELECT id,
-         metaPhotos->>'$.file' AS fileName,
-         metaPhotos->>'$.FileSource'   AS fileSource,
-         metaPhotos->>'$.info.DateTimeOriginal'  AS CreationDate
+         metaPhoto->>'$.file' AS FileName,
+         metaPhoto->>'$.metadata.Make' AS Creator,
+         metaPhoto->>'$.metadata.CreateDate' AS CreationDate
   FROM photo
   WHERE LOWER(${queryPath}) LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
