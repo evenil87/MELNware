@@ -1,20 +1,24 @@
 {
   "name": "connect-mysql-example",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple metadata search app",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
-    "exifr": "^7.1.3",
     "express": "^5.1.0",
     "mysql2": "^3.14.3",
-    "pdf-parse-fork": "^1.2.0",
-    "music-metadata": "^11.8.3"
+    "exifr": "^7.1.3",
+    "music-metadata": "^11.8.3",
+    "pdf-parse-fork": "^1.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

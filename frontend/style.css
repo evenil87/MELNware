@@ -10,19 +10,19 @@
 body {
   margin: 0;
   font-size: 18px;
-  background-color: #eee;
+  background-color: #8EB3C9;
   font-family: 'Crimson Text';
 }
 
 header {
   background-color: #2f5703;
   /* text-color */
-  color: #fff;
+  color: #8EB3C9;
 
   padding: 20px;
 
   a {
-    color: #fff;
+    color: #8EB3C9;
     text-decoration: none;
     font-family: 'Roboto';
   }
@@ -50,13 +50,13 @@ nav {
 main {
   max-width: 700px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: #8EB3C9;
   padding: 20px;
 }
 
 footer {
-  background-color: #2f5703;
-  color: #fff;
+  background-color: #7C3852;
+  color: #8EB3C9;
   padding: 20px;
   text-align: center;
   font-family: 'Roboto';
@@ -94,12 +94,12 @@ input[type="text"] {
 article {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #999;
+  border: 1px solid #34232A;
   border-radius: 10px;
 }
 
 article:nth-child(even) {
-  background-color: #eee;
+  background-color: #8EB3C9;
 }
 
 article h3 {
