@@ -1,5 +1,6 @@
-import { startPageContent } from './start-page.js';
-import { musicSearchPageContent } from './music-search.js';
+import { startPageContent } from './startPage.js';
+// import { musicSearchPageContent } from './music-search.js';
+import { imageSearchPageContent } from './photoSearch.js';
 
 // Click on menu link
 document.body.addEventListener('click', event => {
@@ -19,8 +20,8 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Sök musik') {
-    content = musicSearchPageContent();
+  else if (label === 'image-search') {
+    content = imageSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
 }

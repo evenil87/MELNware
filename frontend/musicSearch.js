@@ -1,5 +1,5 @@
 // A function to create the music search page content
-export function musicSearchPageContent() {
+export function photoSearchPageContent() {
   return `
       <h1>Sök musik</h1>
       <label>

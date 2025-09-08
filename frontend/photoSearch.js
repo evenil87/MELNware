@@ -75,7 +75,7 @@ async function photoSearch() {
         <h3>${file || 'Unknown'}</h3>
         <h2>${make || 'Unknown'}</h2>
         <p><b>Datum skapat</b> ${date || 'Unknown'}</p>
-        <p><a href="/photo/${file}" download>Download file</a></p>
+        <p><a href="fronted/photos/${file}" download>Download file</a></p>
         <p><button class="btn-show-all-image-metadata" data-id="${id}">Show all metadata</button></p>
       </article>
     `;
