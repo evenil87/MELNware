@@ -10,19 +10,19 @@
 body {
   margin: 0;
   font-size: 18px;
-  background-color: #8EB3C9;
+  background-color: #CD948B;
   font-family: 'Crimson Text';
 }
 
 header {
-  background-color: #2f5703;
+  background-color: #E5BCD2;
   /* text-color */
-  color: #8EB3C9;
+  color: #8C6475;
 
   padding: 20px;
 
   a {
-    color: #8EB3C9;
+    color: #8C6475;
     text-decoration: none;
     font-family: 'Roboto';
   }
@@ -50,13 +50,13 @@ nav {
 main {
   max-width: 700px;
   margin: 0 auto;
-  background-color: #8EB3C9;
+  background-color: #CD948B;
   padding: 20px;
 }
 
 footer {
   background-color: #7C3852;
-  color: #8EB3C9;
+  color: #CD948B;
   padding: 20px;
   text-align: center;
   font-family: 'Roboto';
@@ -99,7 +99,7 @@ article {
 }
 
 article:nth-child(even) {
-  background-color: #8EB3C9;
+  background-color: #CD948B;
 }
 
 article h3 {
