@@ -5,28 +5,29 @@ import dbCreds from './db-credentials.js';
 // Get the database driver.
 import mysql from 'mysql2/promise';
 // Import rest routes from backend folder.
-import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
-import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
+//import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
+//import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 // import setupimageRestRoutes from './backend/imageRestRoutes.js';
-// import setupMusicRestRoutes from './backend/musicRestRoutes.js';
+
+// Create a web server called app.
+const app = express();
 
 // Create the connection to database
 const db = await mysql.createConnection(dbCreds);
 
 
-// Create a web server called app.
-const app = express();
-
 // Add rest routes for music search.
-setupPowerPointRestRoutes(app, db);
-setupPdfRestRoutes(app, db);
-// setupMusicRestRoutes(app, db);
-// setupimageRestRoutes(app, db);
+//setupPowerPointRestRoutes(app, db);
+//setupPdfRestRoutes(app, db);
+setupMusicRestRoutes(app, db);
+
 
 
 // Let Express serve all the content from frontend folder
 app.use(express.static('frontend'));
+//app.use('/music', express.static('frontend/music'));
+
 
 // Start the web server at port 3000.
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));

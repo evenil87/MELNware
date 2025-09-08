@@ -15,12 +15,12 @@ function showContent(page) {
   let content = '';
   if (page === 'start') {
     content = startPageContent();
-  } else if (page === 'music-search') {
+  } else if (page === 'music-search') {  // must match data-page
     content = musicSearchPageContent();
   }
+
   document.querySelector('main').innerHTML = content;
 
-  // After injecting music search content, re-bind input events
   if (page === 'music-search') {
     bindMusicSearchEvents();
   }
@@ -36,26 +36,26 @@ function bindMusicSearchEvents() {
 
   if (!inputField || !selectField) return;
 
-  // Input keyup
-  inputField.addEventListener('keyup', () => {
-    musicSearch();
-  });
+  inputField.addEventListener('keyup', musicSearch);
+  selectField.addEventListener('change', musicSearch);
 
-  // Select change
-  selectField.addEventListener('change', () => {
-    musicSearch();
-  });
-
-  // Show all metadata buttons
   document.body.addEventListener('click', async event => {
     const button = event.target.closest('.btn-show-all-music-metadata');
     if (!button) return;
     const id = button.dataset.id;
-    const rawResponse = await fetch('/api/music-all-meta/' + id);
-    const result = await rawResponse.json();
-    const pre = document.createElement('pre');
-    pre.textContent = JSON.stringify(result, null, 2);
-    button.after(pre);
+
+    try {
+      const rawResponse = await fetch('/api/music-all-meta/' + id);
+      if (!rawResponse.ok) throw new Error(`HTTP error ${rawResponse.status}`);
+      const result = await rawResponse.json();
+
+      const pre = document.createElement('pre');
+      pre.textContent = JSON.stringify(result, null, 2);
+      button.after(pre);
+    } catch (err) {
+      console.error(err);
+      alert('Fel vid hämtning av metadata: ' + err.message);
+    }
   });
 }
 
@@ -66,7 +66,6 @@ async function musicSearch() {
   const resultContainer = document.querySelector('.music-search-result');
 
   if (!inputField || !selectField || !resultContainer) return;
-
   if (inputField.value.trim() === '') {
     resultContainer.innerHTML = '';
     return;
@@ -77,6 +76,7 @@ async function musicSearch() {
 
   try {
     const response = await fetch(`/api/music-search/${field}/${searchValue}`);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     const results = await response.json();
 
     let html = '';
