@@ -4,6 +4,7 @@ export function pdfSearchPageContent() {
       <h1>Search PDF</h1>
       <label>
         Search for: <select name="pdf-meta-field">
+          <option value="all">All</option>
           <option value="title">Title</option>
           <option value="author">Author</option>
         </select>
@@ -35,6 +36,13 @@ document.body.addEventListener('change', event => {
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-pdf-metadata');
   if (!button) { return; }
+  // if the metadata is already shown
+  if (button.classList.contains('already-shown')) {
+    button.classList.remove('already-shown');
+    let pre = button.nextElementSibling;
+    pre.remove();
+    return;
+  }
   // if we have clicked a  btn-show-all-pdf-metadata
   let id = button.getAttribute('data-id');
   // fetch detailed metadata
@@ -45,8 +53,9 @@ document.body.addEventListener('click', async event => {
   pre.innerHTML = JSON.stringify(result, null, '  ');
   // add the newly created pre element after the button
   button.after(pre);
+  // add a class signaling that the metadata is shown
+  button.classList.add('already-shown');
 });
-
 
 // pdf search (called on key up in search field and on changes to the select/dropdown)
 async function pdfSearch() {
@@ -72,9 +81,9 @@ async function pdfSearch() {
     <article>
       <h2>${title || 'Unknown'}</h2>
       <p><b>Author:</b> ${author || 'Unknown'}</p>
-      <p><b>Created by:</b> ${creator || 'Unknown'}</p>
       <p><b>Date:</b> ${YYMMDD}</p>
       <p><b>Pages:</b> ${pages || 'Unknown'}</p>
+      <p><b>PDF creator:</b> ${creator || 'Unknown'}</p>
       <p><a href="/pdf/${fileName}" download>Download</a></p>
       <p><button class="btn-show-all-pdf-metadata" data-id="${id}">Show all metadata</button></p>
     </article>
