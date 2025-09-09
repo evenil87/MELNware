@@ -116,3 +116,15 @@ label {
   display: block;
   margin: 20px 0;
 }
+
+.btn-show-all-image-metadata.already-shown {
+  .show {
+    display: none;
+  }
+}
+
+.btn-show-all-image-metadata:not(.already-shown) {
+  .hide {
+    display: none;
+  }
+}

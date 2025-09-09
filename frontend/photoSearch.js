@@ -39,7 +39,7 @@ document.body.addEventListener('click', async event => {
   // if we have clicked a  btn-show-all-image-metadata
   let id = button.getAttribute('data-id');
   // fetch detailed metadata
-  let rawResponse = await fetch('/image-all-meta/' + id);
+  let rawResponse = await fetch('/api/image-all-meta/' + id);
   let result = await rawResponse.json();
   // create a pre element
   let pre = document.createElement('pre');
