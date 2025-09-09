@@ -13,10 +13,8 @@ export default function setupPdfRestRoutes(app, db) {
       field === 'numpages'
         ? "metaPdf->>'$.numpages'"
         : field === 'date'
-        ? "metaPdf->>'$.info.CreationDate'"
-        : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
-
-
+          ? "metaPdf->>'$.info.CreationDate'"
+          : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
 
     const [result] = await db.execute(`
   SELECT id,
@@ -24,7 +22,9 @@ export default function setupPdfRestRoutes(app, db) {
          metaPdf->>'$.info.Title'   AS title,
          metaPdf->>'$.info.Author'  AS author,
          metaPdf->>'$.info.Creator' AS creator,
-         metaPdf->>'$.info.CreationDate' AS date,
+         SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 4) AS year,
+         SUBSTRING(metaPdf->>'$.info.CreationDate', 7, 2) AS month,
+         SUBSTRING(metaPdf->>'$.info.CreationDate', 9, 2) AS day,
          metaPdf->>'$.numpages'     AS pages
   FROM pdf
   WHERE LOWER(${queryPath}) LIKE LOWER(?)

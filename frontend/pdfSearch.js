@@ -6,9 +6,6 @@ export function pdfSearchPageContent() {
         Search for: <select name="pdf-meta-field">
           <option value="title">Title</option>
           <option value="author">Author</option>
-          <option value="creator">Creator</option>
-          <option value="date">Date</option>
-          <option value="numpages">Number of pages</option>
         </select>
       </label>
       <label>
@@ -69,13 +66,14 @@ async function pdfSearch() {
   // unpack search results from json
   let result = await rawResponse.json();
   let resultAsHtml = '';
-  for (let { id, fileName, title, author, creator, date, pages } of result) {
+  for (let { id, fileName, title, author, creator, year, month, day, pages } of result) {
+    let YYMMDD = year && month && day ? `${year}-${month}-${day}` : 'Unknown';
     resultAsHtml += `
     <article>
       <h2>${title || 'Unknown'}</h2>
       <p><b>Author:</b> ${author || 'Unknown'}</p>
       <p><b>Created by:</b> ${creator || 'Unknown'}</p>
-      <p><b>Date:</b> ${date || 'Unknown'}</p>
+      <p><b>Date:</b> ${YYMMDD}</p>
       <p><b>Pages:</b> ${pages || 'Unknown'}</p>
       <p><a href="/pdf/${fileName}" download>Download</a></p>
       <p><button class="btn-show-all-pdf-metadata" data-id="${id}">Show all metadata</button></p>
