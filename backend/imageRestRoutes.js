@@ -1,6 +1,6 @@
 export default function setupImageRestRoutes(app, db) {
 
-  app.get('/api/images-search/:field/:searchValue', async (req, res) => {
+  app.get('/api/image-search/:field/:searchValue', async (req, res) => {
     // get field and searhValue from the request parameters
     const { field, searchValue } = req.params;
     // check that field is a valid field, if not do nothing
@@ -29,7 +29,7 @@ export default function setupImageRestRoutes(app, db) {
   });
 
   // get all metadata for a specific image by id
-  app.get('/api/images-all-meta/:id', async (req, res) => {
+  app.get('/api/image-all-meta/:id', async (req, res) => {
     const { id } = req.params;
     let [result] = await db.execute(`
     SELECT * FROM photo WHERE id = ?

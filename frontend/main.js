@@ -12,6 +12,7 @@ document.body.addEventListener('click', event => {
   let linkText = navLink.textContent;
   // show correct content depending on menu choice
   showContent(linkText);
+  console.log('linkText:', linkText);
 });
 
 // Function to show page content
@@ -20,7 +21,7 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'image-search') {
+  else if (label === 'Search') {
     content = imageSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;

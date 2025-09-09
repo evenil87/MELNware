@@ -14,7 +14,6 @@ import setupimageRestRoutes from './backend/imageRestRoutes.js';
 // Create the connection to database
 const db = await mysql.createConnection(dbCreds);
 
-
 // Create a web server called app.
 const app = express();
 

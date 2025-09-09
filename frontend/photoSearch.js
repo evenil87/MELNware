@@ -39,7 +39,7 @@ document.body.addEventListener('click', async event => {
   // if we have clicked a  btn-show-all-image-metadata
   let id = button.getAttribute('data-id');
   // fetch detailed metadata
-  let rawResponse = await fetch('/images-all-meta/' + id);
+  let rawResponse = await fetch('/image-all-meta/' + id);
   let result = await rawResponse.json();
   // create a pre element
   let pre = document.createElement('pre');
@@ -68,14 +68,15 @@ async function photoSearch() {
   );
   // unpack search results from json
   let result = await rawResponse.json();
+
   let resultAsHtml = '';
-  for (let { id, file, make, date } of result) {
+  for (let { id, File, Creator, Date } of result) {
     resultAsHtml += `
       <article>
-        <h3>${file || 'Unknown'}</h3>
-        <h2>${make || 'Unknown'}</h2>
-        <p><b>Datum skapat</b> ${date || 'Unknown'}</p>
-        <p><a href="fronted/photos/${file}" download>Download file</a></p>
+        <h3>${File || 'Unknown'}</h3>
+        <h2>${Creator || 'Unknown'}</h2>
+        <p><b>Datum skapat</b> ${Date || 'Unknown'}</p>
+        <p><a href="frontend/photos/${File}" download>Download file</a></p>
         <p><button class="btn-show-all-image-metadata" data-id="${id}">Show all metadata</button></p>
       </article>
     `;
