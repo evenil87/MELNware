@@ -116,3 +116,20 @@ label {
   display: block;
   margin: 20px 0;
 }
+
+label:not(.checkbox-label) {
+  display: block;
+  margin: 20px 0;
+}
+
+.btn-show-all-pdf-metadata.already-shown {
+  .show {
+    display: none;
+  }
+}
+
+.btn-show-all-pdf-metadata:not(.already-shown) {
+  .hide {
+    display: none;
+  }
+}
