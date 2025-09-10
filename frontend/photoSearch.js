@@ -36,6 +36,12 @@ document.body.addEventListener('change', event => {
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-image-metadata');
   if (!button) { return; }
+  if (button.classList.contains('already-shown')) {
+    button.classList.remove('already-shown');
+    let pre = button.nextElementSibling;
+    pre.remove();
+    return;
+  }
   // if we have clicked a  btn-show-all-image-metadata
   let id = button.getAttribute('data-id');
   // fetch detailed metadata
@@ -46,6 +52,7 @@ document.body.addEventListener('click', async event => {
   pre.innerHTML = JSON.stringify(result, null, '  ');
   // add the newly created pre element after the button
   button.after(pre);
+  button.classList.add('already-shown');
 });
 
 
@@ -75,7 +82,7 @@ async function photoSearch() {
       <article>
         <h3>${File || 'Unknown'}</h3>
         <h2>${Creator || 'Unknown'}</h2>
-        <p><b>Datum skapat</b> ${Date || 'Unknown'}</p>
+        <p><b>Date</b> ${Date || 'Unknown'}</p>
         <p><a href="frontend/photos/${File}" download>Download file</a></p>
         <p><button class="btn-show-all-image-metadata" data-id="${id}">Show all metadata</button></p>
       </article>
