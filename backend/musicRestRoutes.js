@@ -15,7 +15,8 @@ export default function setupMusicRestRoutes(app, db) {
            metaMusic->>'$.common.title' AS title,
            metaMusic->>'$.common.artist' AS artist,
            metaMusic->>'$.common.album' AS album,
-           metaMusic->>'$.common.genre[0]' AS genre
+           metaMusic->>'$.common.genre[0]' AS genre,
+           metaMusic->>'$.common.year' AS year
          FROM music
          WHERE LOWER(metaMusic->>'$.common.${field}') LIKE LOWER(?)`,
         [`%${searchValue}%`]

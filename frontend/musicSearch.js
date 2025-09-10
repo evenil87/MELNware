@@ -49,12 +49,13 @@ async function musicSearch() {
     const results = await response.json();
 
     let html = '';
-    results.forEach(({ id, fileName, title, artist, album, genre }) => {
+    results.forEach(({ id, fileName, title, artist, album, genre, year }) => {
       html += `
         <article>
           <h3>${artist || 'Unknown artist'}</h3>
           <h2>${title || 'Unknown titel'}</h2>
           <p><b>From album:</b> ${album || 'Unknown album'}</p>
+          <p><b>release year:</b> ${year || 'Unknown year'}</p>
           <p><b>Genre:</b> ${genre || 'Unknown genre'}</p>
           <audio controls src="/music/${fileName}"></audio>
           <p><a href="/music/${fileName}" download>Download</a></p>
