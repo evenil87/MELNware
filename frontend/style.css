@@ -99,7 +99,10 @@ article {
 }
 
 article:nth-child(even) {
-  background-color: #CD948B;
+  background-color: #edf77c;
+}
+article:nth-child(odd) {
+  background-color: #e1d4d0;
 }
 
 article h3 {

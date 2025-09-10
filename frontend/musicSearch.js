@@ -1,17 +1,17 @@
 export function musicSearchPageContent() {
   return `
-    <h1>Sök musik</h1>
+    <h1>Search Music</h1>
     <label>
-      Sök på:
+      Search:
       <select name="music-meta-field">
         <option value="artist">Artist</option>
-        <option value="title">Låttitel</option>
+        <option value="title">Titel</option>
         <option value="album">Album</option>
         <option value="genre">Genre</option>
       </select>
     </label>
     <label>
-      <input name="music-search" type="text" placeholder="Sök bland musikfiler">
+      <input name="music-search" type="text" placeholder="Search amongst musicfiles">
     </label>
     <section class="music-search-result"></section>
   `;
@@ -26,10 +26,9 @@ export function bindMusicSearchEvents() {
 
   inputField.addEventListener('keyup', musicSearch);
   selectField.addEventListener('change', musicSearch);
-
-  document.body.addEventListener('click', handleMetadataButtonClick);
 }
 
+// Perform music search
 async function musicSearch() {
   const inputField = document.querySelector('input[name="music-search"]');
   const selectField = document.querySelector('select[name="music-meta-field"]');
@@ -53,13 +52,13 @@ async function musicSearch() {
     results.forEach(({ id, fileName, title, artist, album, genre }) => {
       html += `
         <article>
-          <h3>${artist || 'Okänd artist'}</h3>
-          <h2>${title || 'Okänd titel'}</h2>
-          <p><b>Från albumet:</b> ${album || 'Okänt album'}</p>
-          <p><b>Genre:</b> ${genre || 'Okänd genre'}</p>
+          <h3>${artist || 'Unknown artist'}</h3>
+          <h2>${title || 'Unknown titel'}</h2>
+          <p><b>From album:</b> ${album || 'Unknown album'}</p>
+          <p><b>Genre:</b> ${genre || 'Unknown genre'}</p>
           <audio controls src="/music/${fileName}"></audio>
-          <p><a href="/music/${fileName}" download>Ladda ned filen</a></p>
-          <p><button class="btn-show-all-music-metadata" data-id="${id}">Visa all metadata</button></p>
+          <p><a href="/music/${fileName}" download>Download</a></p>
+          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
         </article>
       `;
     });
@@ -70,21 +69,41 @@ async function musicSearch() {
   }
 }
 
-async function handleMetadataButtonClick(event) {
-  const button = event.target.closest('.btn-show-all-music-metadata');
+// Event handler to show/hide all metadata for a music file
+document.body.addEventListener('click', async event => {
+  let button = event.target.closest('.btn-show-all-music-metadata');
   if (!button) return;
-  const id = button.dataset.id;
 
+  // If metadata is already shown → hide it
+  if (button.classList.contains('already-shown')) {
+    button.classList.remove('already-shown');
+    button.textContent = 'Show all metadata'; // reset text
+    let pre = button.nextElementSibling;
+    if (pre && pre.tagName === 'PRE') {
+      pre.remove();
+    }
+    return;
+  }
+
+  // Fetch detailed metadata
+  let id = button.getAttribute('data-id');
   try {
-    const rawResponse = await fetch('/api/music-all-meta/' + id);
+    let rawResponse = await fetch('/api/music-all-meta/' + id);
     if (!rawResponse.ok) throw new Error(`HTTP error ${rawResponse.status}`);
-    const result = await rawResponse.json();
+    let result = await rawResponse.json();
 
-    const pre = document.createElement('pre');
+    // Create a <pre> element
+    let pre = document.createElement('pre');
     pre.textContent = JSON.stringify(result, null, 2);
+
+    // Add the newly created <pre> after the button
     button.after(pre);
+
+    // Add a class signaling that the metadata is shown + update button text
+    button.classList.add('already-shown');
+    button.textContent = 'Hide metadata';
   } catch (err) {
     console.error(err);
     alert('Fel vid hämtning av metadata: ' + err.message);
   }
-}
+});
