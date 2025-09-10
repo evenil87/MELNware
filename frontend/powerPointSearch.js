@@ -61,7 +61,7 @@ async function powerPointSearch() {
   let result = await rawResponse.json();
 
   let resultAsHtml = '';
-  for (let { id, title, creationDate, company, original, fileName } of result) {
+  for (let { id, title, creationDate, company, original, fileSize, slideCount, fileName } of result) {
     resultAsHtml += `
       <article>
         <h3>${title || 'Unknown title'}</h3>
@@ -69,6 +69,7 @@ async function powerPointSearch() {
         <p><b>Source:</b> ${original || 'Unknown source'}</p>
         <p><b>Number of slides:</b> ${slideCount || 'Unknown number'}</p>
         <p><b>Size:</b> ${fileSize || 'Unknown size'}</p>
+        <p><b>Created:</b> ${creationDate || 'Unknown date'}</p>
         <p><a href="/frontend/powerPoint/${fileName || ''}" download>Download the file</a></p>
         <p><button class="btnShowAllPowerPointMetadata" data-id="${id}">Show all metadata</button></p>
       </article>
