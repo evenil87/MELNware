@@ -77,14 +77,19 @@ async function photoSearch() {
   let result = await rawResponse.json();
 
   let resultAsHtml = '';
-  for (let { id, File, Creator, Date } of result) {
+  for (let { id, File, Creator, FileSource, Flash, Date } of result) {
     resultAsHtml += `
       <article>
         <h3>${File || 'Unknown'}</h3>
         <h2>${Creator || 'Unknown'}</h2>
-        <p><b>Date</b> ${Date || 'Unknown'}</p>
-        <p><a href="frontend/photos/${File}" download>Download file</a></p>
-        <p><button class="btn-show-all-image-metadata" data-id="${id}">Show all metadata</button></p>
+        <p><b>Date:</b> ${Date || 'Unknown'}</p>
+        <p><b>File source:</b> ${FileSource || 'Unknown'}</p>
+        <p><b>Flash:</b> ${Flash || 'Unknown'}</p>
+        <p><a href="frontend/photos/${File}" download>Download file here</a></p>
+        <p><button class="btn-show-all-image-metadata" data-id="${id}">
+          <span class="show">Show all metadata</span>
+          <span class="hide">Hide all metadata</span>
+        </button></p>
       </article>
     `;
   }

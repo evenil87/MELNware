@@ -7,7 +7,9 @@ export default function setupImageRestRoutes(app, db) {
     const validFields = {
       file: '$.file',
       make: '$.metadata.Make',
-      date: '$.metadata.CreateDate'
+      date: '$.metadata.CreateDate',
+      fileSource: '$.metadata.FileSource',
+      flash: '$.metadata.Flash'
     };
 
     if (!validFields[field]) {
@@ -19,7 +21,9 @@ export default function setupImageRestRoutes(app, db) {
   SELECT id,
          metaPhoto->>'$.file' AS File,
          metaPhoto->>'$.metadata.Make' AS Creator,
-         metaPhoto->>'$.metadata.CreateDate' AS Date
+         metaPhoto->>'$.metadata.CreateDate' AS Date,
+         metaPhoto->>'$.metadata.FileSource' AS FileSource,
+         metaPhoto->>'$.metadata.Flash' AS Flash
   FROM photo
   WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
