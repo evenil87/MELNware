@@ -36,6 +36,30 @@ export default function setupPdfRestRoutes(app, db) {
         );
         return res.json(result);
       }
+      
+      //search year
+      if (field === 'date') {
+        const [result] = await db.execute(
+          `
+    SELECT id,
+           metaPdf->>'$.file'   AS fileName,
+           metaPdf->>'$.info.Title'   AS title,
+           metaPdf->>'$.info.Author'  AS author,
+           metaPdf->>'$.info.Creator' AS creator,
+           SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 4) AS year,
+           SUBSTRING(metaPdf->>'$.info.CreationDate', 7, 2) AS month,
+           SUBSTRING(metaPdf->>'$.info.CreationDate', 9, 2) AS day,
+           SUBSTRING(metaPdf->>'$.info.ModDate', 3, 4) AS modYear,
+           SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
+           SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
+           metaPdf->>'$.numpages'     AS pages
+    FROM pdf
+    WHERE SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 4) = ?
+    `,
+          [searchValue]
+        );
+        return res.json(result);
+      }
 
       // pages and dates
       const queryPath =

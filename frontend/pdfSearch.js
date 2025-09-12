@@ -27,6 +27,8 @@ export function pdfSearchPageContent() {
     `;
 }
 
+
+
 // Listen to key up events in the pdf-search input field
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="pdf-search"]');
@@ -109,7 +111,8 @@ async function pdfSearch() {
   // unpack search results from json
   let result = await rawResponse.json();
   let resultAsHtml = `<p>${result.length} results</p>`;
-  for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages } of result) {
+  for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
+    of result) {
     let YYMMDD = year && month && day ? `${year}-${month}-${day}` : 'Unknown';
     let modYYMMDD = modYear && modMonth && modDay ? `${modYear}-${modMonth}-${modDay}` : 'Unknown';
     resultAsHtml += `
