@@ -133,3 +133,11 @@ label:not(.checkbox-label) {
     display: none;
   }
 }
+
+.btn-advanced-search.already-shown .show {
+  display: none;
+}
+
+.btn-advanced-search:not(.already-shown) .hide {
+  display: none;
+}

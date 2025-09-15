@@ -1,33 +1,55 @@
 // A function to create the pdf search page content
 export function pdfSearchPageContent() {
   return `
-      <h1>Search PDF</h1>
+<h1>Search PDF</h1>
       <label>
-      <button id="toggle-filters">Filter</button>
-      <section id="filters" style="display:none; margin-top:10px;">
-      <input type="checkbox" name="pdf-field" value="all" checked>
-        All
+        Search for: <select name="pdf-meta-field">
+          <option value="">All</option>
+          <option value="title">Title</option>
+          <option value="author">Author</option>
+          <option value="creator">Creator</option>
+          <option value="numpages">Number of pages</option>
+        </select>
       </label>
-      <label>
-        <input type="checkbox" name="pdf-field" value="title">
-        Title
-      </label>
-      <label>
-        <input type="checkbox" name="pdf-field" value="author">
-        Author
-      </label>
-      <label>
-        <input type="checkbox" name="pdf-field" value="creator">
-        PDF creator
-      </label></section>
+
       <label>
         <input name="pdf-search" type="text" placeholder="Search">
       </label>
+
+      <p>
+        <button class="btn-advanced-search">
+          <span class="show">Advanced search</span>
+          <span class="hide">Hide advanced search</span>
+        </button>
+      </p>
+
+      <section class="advanced-search" style="display:none; margin-top:10px;">
+        <div class="date-pickers">
+          <label>
+              From date:
+              <input name="pdf-fromDate" type="date" value="1970-01-01">
+          </label>
+          <label>
+              To date:
+              <input name="pdf-toDate" type="date" value="${new Date().toISOString().split('T')[0]}">
+          </label>
+        </div>
+
+        <div class="page-range" style="margin-top:10px;">
+          <label>
+              Min pages:
+              <input name="pdf-minPages" type="number" min="1" value="">
+          </label>
+          <label>
+              Max pages:
+              <input name="pdf-maxPages" type="number" min="1" value="">
+          </label>
+        </div>
+      </section>
+
       <section class="pdf-search-result"></section>
     `;
 }
-
-
 
 // Listen to key up events in the pdf-search input field
 document.body.addEventListener('keyup', event => {
@@ -36,11 +58,31 @@ document.body.addEventListener('keyup', event => {
   pdfSearch();
 });
 
-// Listen to changes to the checkboxes pdf meta field
+// Listen to changes in the dropdowns and filters
 document.body.addEventListener('change', event => {
-  let checkbox = event.target.closest('input[name="pdf-field"]');
-  if (!checkbox) { return; }
-  pdfSearch();
+  if (event.target.matches('select[name="pdf-meta-field"]')) {
+    pdfSearch();
+  }
+  if (event.target.matches('input[name="pdf-minPages"], input[name="pdf-maxPages"], input[name="pdf-fromDate"], input[name="pdf-toDate"]')) {
+    pdfSearch();
+  }
+});
+
+// Event handler for advanced search section
+document.body.addEventListener('click', event => {
+  let button = event.target.closest('.btn-advanced-search');
+  if (!button) return;
+  let section = document.querySelector('.advanced-search');
+  if (!section) return;
+  if (button.classList.contains('already-shown')) {
+    // Hide advanced search section
+    button.classList.remove('already-shown');
+    section.style.display = 'none';
+  } else {
+    // Show advanced search section
+    button.classList.add('already-shown');
+    section.style.display = 'block';
+  }
 });
 
 // event handler to show all metadata for a pdf file on click
@@ -69,47 +111,30 @@ document.body.addEventListener('click', async event => {
   button.classList.add('already-shown');
 });
 
-document.body.addEventListener('click', event => {
-  if (event.target.id === 'toggle-filters') {
-    const filters = document.getElementById('filters');
-    if (filters) {
-      filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
-    }
-  }
-});
-
-// pdf search (called on key up in search field and on changes to the select/dropdown)
+// Pdf search (called on key up in search field and on changes to the select/dropdown)
 async function pdfSearch() {
+  // Get search values from chosen input field
   let inputField = document.querySelector('input[name="pdf-search"]');
   let query = inputField.value.trim();
-  // get the chosen field to search for in the meta data
-  // convert a node list of our checkboxes to a real array
-  // only keep the checked checkboxes and then read their values
-  let fields = [...document.querySelectorAll('input[name^="pdf-field"]')]
-    .filter(x => x.checked)
-    .map(x => x.value);
-  // if empty input field do not search just empty search results
-  // or no field checkboes selected
-  if (inputField.value === '' || fields.length === 0) {
-    document.querySelector('.pdf-search-result').innerHTML = '';
-    return;
-  }
-  // use 'all' if both author and title is selected
-  let field;
-  if (fields.includes('title') && fields.includes('author') && fields.length === 2) {
-    field = 'all';
-  } else if (fields.length === 1) {
-    field = fields[0];
-  } else {
-    // För enkelhet: ta första fältet om fler än 1 (förutom title+author)
-    field = fields[0];
-  }
 
-  // ask the rest-api (correct rest route) for search results
-  let rawResponse = await fetch(`/api/pdf-search/${field}/${encodeURIComponent(query)}`);
+  let fromDate = document.querySelector('input[name="pdf-fromDate"]').value;
+  let toDate = document.querySelector('input[name="pdf-toDate"]').value;
+
+  let minPages = document.querySelector('input[name="pdf-minPages"]').value;
+  let maxPages = document.querySelector('input[name="pdf-maxPages"]').value;
+
+  let fieldSelect = document.querySelector('select[name="pdf-meta-field"]');
+  let field = fieldSelect.value || 'all';
+
+  // Build the URL with query parameters
+  let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
+  if (minPages) url += `&minPages=${minPages}`;
+  if (maxPages) url += `&maxPages=${maxPages}`;
   
-  // unpack search results from json
+  // Get results
+  let rawResponse = await fetch(url);
   let result = await rawResponse.json();
+
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
     of result) {

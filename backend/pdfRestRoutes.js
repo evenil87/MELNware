@@ -6,9 +6,29 @@ export default function setupPdfRestRoutes(app, db) {
   app.get('/api/pdf-search/:field/:searchValue', async (req, res) => {
     try {
       const { field, searchValue } = req.params;
+      const { from, to, minPages, maxPages } = req.query;
 
       if (!['all', 'title', 'author', 'creator', 'date', 'numpages'].includes(field)) {
         return res.status(400).json({ error: 'Invalid field name!' });
+      }
+
+      // CreationDate is currently in D:YYYYMMDD so we transform the dates
+      let dateFilter = '';
+      let params = [];
+      if (from && to) {
+        dateFilter = ` AND STR_TO_DATE(SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 8), '%Y%m%d')
+                       BETWEEN ? AND ?`;
+        params.push(from.replace(/-/g, ''), to.replace(/-/g, ''));
+      }
+
+      let pagesFilter = '';
+      if (minPages) {
+        pagesFilter += ' AND CAST(metaPdf->>"$.numpages" AS UNSIGNED) >= ?';
+        params.push(minPages);
+      }
+      if (maxPages) {
+        pagesFilter += ' AND CAST(metaPdf->>"$.numpages" AS UNSIGNED) <= ?';
+        params.push(maxPages);
       }
 
       // search both title and author ('all')
@@ -29,39 +49,17 @@ export default function setupPdfRestRoutes(app, db) {
                  SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
                  metaPdf->>'$.numpages'     AS pages
           FROM pdf
-          WHERE LOWER(metaPdf->>'$.info.Title')  LIKE LOWER(?)
-             OR LOWER(metaPdf->>'$.info.Author') LIKE LOWER(?)
+          WHERE (LOWER(metaPdf->>'$.info.Title')  LIKE LOWER(?)
+             OR LOWER(metaPdf->>'$.info.Author') LIKE LOWER(?))
+             ${dateFilter}
+             ${pagesFilter}
         `,
-          [like, like]
-        );
-        return res.json(result);
-      }
-      
-      //search year
-      if (field === 'date') {
-        const [result] = await db.execute(
-          `
-    SELECT id,
-           metaPdf->>'$.file'   AS fileName,
-           metaPdf->>'$.info.Title'   AS title,
-           metaPdf->>'$.info.Author'  AS author,
-           metaPdf->>'$.info.Creator' AS creator,
-           SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 4) AS year,
-           SUBSTRING(metaPdf->>'$.info.CreationDate', 7, 2) AS month,
-           SUBSTRING(metaPdf->>'$.info.CreationDate', 9, 2) AS day,
-           SUBSTRING(metaPdf->>'$.info.ModDate', 3, 4) AS modYear,
-           SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
-           SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
-           metaPdf->>'$.numpages'     AS pages
-    FROM pdf
-    WHERE SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 4) = ?
-    `,
-          [searchValue]
+          [like, like, ...params]
         );
         return res.json(result);
       }
 
-      // pages and dates
+      // pages and other fields
       const queryPath =
         field === 'numpages'
           ? "metaPdf->>'$.numpages'"
@@ -85,8 +83,10 @@ export default function setupPdfRestRoutes(app, db) {
                metaPdf->>'$.numpages'     AS pages
         FROM pdf
         WHERE LOWER(${queryPath}) LIKE LOWER(?)
+        ${dateFilter}
+        ${pagesFilter}
       `,
-        ['%' + searchValue + '%']
+        ['%' + searchValue + '%', ...params]
       );
 
       res.json(result);
@@ -110,7 +110,6 @@ export default function setupPdfRestRoutes(app, db) {
 
   // download file
   const PDF_DIR = path.resolve('frontend/pdfs');
-
 
   function safeJoinPdf(fileName) {
     const full = path.resolve(PDF_DIR, fileName);
