@@ -7,8 +7,6 @@ export function pdfSearchPageContent() {
           <option value="">All</option>
           <option value="title">Title</option>
           <option value="author">Author</option>
-          <option value="creator">Creator</option>
-          <option value="numpages">Number of pages</option>
         </select>
       </label>
 
@@ -130,7 +128,7 @@ async function pdfSearch() {
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
-  
+
   // Get results
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();

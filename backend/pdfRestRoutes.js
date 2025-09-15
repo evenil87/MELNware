@@ -59,7 +59,7 @@ export default function setupPdfRestRoutes(app, db) {
         return res.json(result);
       }
 
-      // pages and other fields
+      // search pages and dates
       const queryPath =
         field === 'numpages'
           ? "metaPdf->>'$.numpages'"
