@@ -77,10 +77,15 @@ async function photoSearch() {
   let result = await rawResponse.json();
 
   let resultAsHtml = '';
-  for (let { id, File, Creator, FileSource, Flash, Date } of result) {
+  for (let { id, File, Creator, FileSource, Flash, Date, metadata } of result) {
+    // om metadata finns, plocka ut lat/long
+    let lat = latitude;
+    let lon = longitude;
     resultAsHtml += `
       <article>
-        <img src="/photos/${File}">
+       <a ${lat && lon ? `href="https://maps.google.com/?q=${lat},${lon}" target="_blank"` : ''}>
+          <img src="/photos/${File}">
+        </a>
         <h3>${File || 'Unknown'}</h3>
         <h2>${Creator || 'Unknown'}</h2>
         <p><b>Date:</b> ${Date || 'Unknown'}</p>
@@ -94,6 +99,6 @@ async function photoSearch() {
       </article>
     `;
   }
-  // replace content in the .image-search-result element (a section tag)
+
   document.querySelector('.image-search-result').innerHTML = resultAsHtml;
 }

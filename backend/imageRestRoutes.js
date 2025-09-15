@@ -9,7 +9,9 @@ export default function setupImageRestRoutes(app, db) {
       make: '$.metadata.Make',
       date: '$.metadata.CreateDate',
       fileSource: '$.metadata.FileSource',
-      flash: '$.metadata.Flash'
+      flash: '$.metadata.Flash',
+      latitude: '$.metadata.latitude',
+      longitude: '$.metadata.longitude'
     };
 
     if (!validFields[field]) {
@@ -23,7 +25,9 @@ export default function setupImageRestRoutes(app, db) {
          metaPhoto->>'$.metadata.Make' AS Creator,
          metaPhoto->>'$.metadata.CreateDate' AS Date,
          metaPhoto->>'$.metadata.FileSource' AS FileSource,
-         metaPhoto->>'$.metadata.Flash' AS Flash
+         metaPhoto->>'$.metadata.Flash' AS Flash,
+         metaPhoto->>'$.metadata.latitude' AS latitude,
+         metaPhoto->>'$.metadata.longitude' AS longitude
   FROM photo
   WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
@@ -39,20 +43,5 @@ export default function setupImageRestRoutes(app, db) {
     SELECT * FROM photo WHERE id = ?
   `, [id]);
     res.json(result[0] || {});
-  });
-
-  app.get('/api/images', async (req, res) => {
-    let data = await fetch('/api/images');
-    let images = await data.json();
-    let html = '';
-    for (let image of images) {
-      let { latitude, longitude } = image.metadata;
-      html += `<section>
-      <a href="https://maps.google.com/?q=${image.metadata.latitude},${image.metadata.longitude}" target="_blank">
-        <img src="/images/${image.fileName}" alt="Arable land at latitude ${latitude}, longitude ${longitude}">
-      </a>
-    </section>`;
-    }
-    document.querySelector('article').innerHTML = html;
   });
 }
