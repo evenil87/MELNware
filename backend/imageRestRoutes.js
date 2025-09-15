@@ -19,7 +19,7 @@ export default function setupImageRestRoutes(app, db) {
       return;
     }
 
-    const [result] = await db.execute(`
+    const [rows] = await db.execute(`
   SELECT id,
          metaPhoto->>'$.file' AS File,
          metaPhoto->>'$.metadata.Make' AS Creator,
@@ -31,6 +31,14 @@ export default function setupImageRestRoutes(app, db) {
   FROM photo
   WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
+
+    const result = rows.map(row => ({
+      ...row,
+      metadata: {
+        latitude: row.latitude,
+        longitude: row.longitude
+      }
+    }));
 
     // return the result as json
     res.json(result);

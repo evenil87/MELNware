@@ -79,8 +79,8 @@ async function photoSearch() {
   let resultAsHtml = '';
   for (let { id, File, Creator, FileSource, Flash, Date, metadata } of result) {
     // om metadata finns, plocka ut lat/long
-    let lat = latitude;
-    let lon = longitude;
+    let lat = metadata?.latitude;
+    let lon = metadata?.longitude;
     resultAsHtml += `
       <article>
        <a ${lat && lon ? `href="https://maps.google.com/?q=${lat},${lon}" target="_blank"` : ''}>
