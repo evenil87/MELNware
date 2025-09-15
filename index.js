@@ -7,6 +7,7 @@ import mysql from 'mysql2/promise';
 // Import rest routes from backend folder.
 import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
 import setupPowerPointRestRoutesAllMeta from './backend/powerPointRestRoutesAllMeta.js';
+import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 // import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 // import setupimageRestRoutes from './backend/imageRestRoutes.js';
@@ -21,6 +22,7 @@ const app = express();
 // Add rest routes for music search.
 setupPowerPointRestRoutes(app, db);
 setupPowerPointRestRoutesAllMeta(app, db);
+setupPowerPointDownloadRoute(app, db);
 setupPdfRestRoutes(app, db);
 // setupMusicRestRoutes(app, db);
 // setupimageRestRoutes(app, db);
