@@ -116,3 +116,60 @@ label {
   display: block;
   margin: 20px 0;
 }
+
+.current {
+  /* Markerar med färg vart du befinner dig */
+  background-color: #F1BEBE;
+}
+
+#nav a:hover {
+  /* Viken färg som används när man går med musen över länken */
+  background-color: #AEAEAE;
+}
+
+#logo {
+  /* Centrerar loggan på alla sidor */
+  text-align: center;
+}
+
+address {
+  /* Text/address på kontakt */
+  font-family: Georgia, serif;
+  text-align: center;
+}
+
+iframe {
+  /* Centrerar Kartan på kontakt */
+  display: block;
+  margin: 0 auto;
+  border-style: none;
+}
+
+.links {
+  /* Ärndrar länkarna som befinner sig i footern */
+  background-color: #F1BEBE;
+  color: #373434;
+  padding: 1em 5em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+a:hover {
+  /* Markerar med färg när man går med muspekaren över länken */
+  background-color: #F6F5E8;
+}
+
+a:link {
+  /* Ändrar färg på länkarna */
+  color: #4d001f;
+}
+
+a:visited {
+  /* Ändrar färg på länkarna i footern */
+  color: #4d001f;
+}
+
+a {
+  /* Gör att musen ändrar form vid kontakt med länk */
+  cursor: pointer;
+}
