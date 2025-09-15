@@ -81,6 +81,7 @@ async function photoSearch() {
     // om metadata finns, plocka ut lat/long
     let lat = metadata?.latitude;
     let lon = metadata?.longitude;
+
     resultAsHtml += `
       <article>
        <a ${lat && lon ? `href="https://maps.google.com/?q=${lat},${lon}" target="_blank"` : ''}>

@@ -32,13 +32,28 @@ export default function setupImageRestRoutes(app, db) {
   WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
 `, ['%' + searchValue + '%']);
 
-    const result = rows.map(row => ({
-      ...row,
-      metadata: {
-        latitude: row.latitude,
-        longitude: row.longitude
+    const result = rows.map(row => {
+      // formatera datum
+      let formattedDate = row.Date;
+      if (formattedDate) {
+        try {
+          formattedDate = new Date(formattedDate).toISOString().slice(0, 10);
+        } catch (e) {
+          // om det inte går, låt det vara som det är
+        }
       }
-    }));
+
+      // returnera objektet med metadata och formaterat datum
+      return {
+        ...row,
+        Date: formattedDate,
+        metadata: {
+          latitude: row.latitude,
+          longitude: row.longitude
+        }
+      };
+    });
+
 
     // return the result as json
     res.json(result);
