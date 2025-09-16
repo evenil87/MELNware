@@ -5,7 +5,7 @@ export function musicSearchPageContent() {
       Search:
       <select name="music-meta-field">
         <option value="artist">Artist</option>
-        <option value="title">Titel</option>
+        <option value="title">Title</option>
         <option value="album">Album</option>
         <option value="genre">Genre</option>
       </select>
@@ -55,7 +55,7 @@ async function musicSearch() {
           <h3>${artist || 'Unknown artist'}</h3>
           <h2>${title || 'Unknown titel'}</h2>
           <p><b>From album:</b> ${album || 'Unknown album'}</p>
-          <p><b>release year:</b> ${year || 'Unknown year'}</p>
+          <p><b>Release year:</b> ${year || 'Unknown year'}</p>
           <p><b>Genre:</b> ${genre || 'Unknown genre'}</p>
           <audio controls src="/music/${fileName}"></audio>
           <p><a href="/music/${fileName}" download>Download</a></p>
