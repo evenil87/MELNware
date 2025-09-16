@@ -4,6 +4,7 @@ export function imageSearchPageContent() {
       <h1>Image Search</h1>
       <label>
         Search: <select name="image-meta-field">
+          <option value="all">All</option>
           <option value="make">Creator</option>
           <option value="file">Filename</option>
           <option value="date">Date created</option>
@@ -71,12 +72,12 @@ async function photoSearch() {
   ).value;
   // ask the rest-api (correct rest route) for search results
   let rawResponse = await fetch(
-    `/api/image-search/${field}/${inputField.value}`
+    `/api/image-search/${field}/${encodeURIComponent(inputField.value)}`
   );
   // unpack search results from json
   let result = await rawResponse.json();
-
-  let resultAsHtml = '';
+  // visar antal sökresultat
+  let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, File, Creator, FileSource, Flash, Date, metadata } of result) {
     // om metadata finns, plocka ut lat/long
     let lat = metadata?.latitude;
