@@ -6,7 +6,6 @@ export function imageSearchPageContent() {
         Search: <select name="image-meta-field">
           <option value="make">Creator</option>
           <option value="file">Filename</option>
-          <option value="date">Date created</option>
         </select>
       </label>
       <label>
