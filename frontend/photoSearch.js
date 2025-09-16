@@ -16,7 +16,7 @@ export function imageSearchPageContent() {
     `;
 }
 
-
+//hej
 // Listen to key up events in the image-search input field
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="image-search"]');
