@@ -33,7 +33,7 @@ export function musicSearchPageContent() {
         box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         transition: background-position 0.3s ease, transform 0.2s ease;
         display: inline-block;
-        margin: 4px 0; /* space above/below button */
+        margin: 4px 0; 
       }
       .btn-play.pastel:hover {
         background-position: 100% 0;
@@ -45,6 +45,11 @@ export function musicSearchPageContent() {
         height: 70px;
         margin-top: 4px;
         border-radius: 8px;
+      }
+      .time-display {
+        font-size: 14px;
+        color: #333;
+        margin-top: 2px;
       }
       .music-search-result article {
         margin-bottom: 24px;
@@ -96,6 +101,7 @@ async function musicSearch() {
 
           <!-- Play button under Genre -->
           <button class="btn-play pastel" data-file="/music/${fileName}">Play</button>
+          <div class="time-display">00:00 / 00:00</div>
           <canvas class="waveform" data-file="/music/${fileName}"></canvas>
 
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
@@ -141,7 +147,7 @@ document.body.addEventListener('click', async event => {
   }
 });
 
-// Rolling waveform player
+// Pastel sound stack player
 let audioContext;
 let currentSource;
 let analyser;
@@ -151,7 +157,8 @@ document.body.addEventListener('click', async event => {
   const playButton = event.target.closest('.btn-play');
   if (!playButton) return;
 
-  const canvas = playButton.nextElementSibling;
+  const canvas = playButton.nextElementSibling.nextElementSibling;
+  const timeDisplay = playButton.nextElementSibling;
   const file = playButton.getAttribute('data-file');
 
   if (!audioContext) {
@@ -164,6 +171,7 @@ document.body.addEventListener('click', async event => {
     cancelAnimationFrame(animationId);
     currentSource = null;
     playButton.textContent = "Play";
+    timeDisplay.textContent = "00:00 / 00:00";
     return;
   }
 
@@ -176,8 +184,8 @@ document.body.addEventListener('click', async event => {
   currentSource.buffer = audioBuffer;
 
   analyser = audioContext.createAnalyser();
-  analyser.fftSize = 1024;
-  const bufferLength = analyser.fftSize;
+  analyser.fftSize = 256;
+  const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
   currentSource.connect(analyser);
@@ -188,62 +196,50 @@ document.body.addEventListener('click', async event => {
 
   const ctx = canvas.getContext('2d');
 
-  function draw() {
-    animationId = requestAnimationFrame(draw);
-    analyser.getByteTimeDomainData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Background pastel gradient
-    const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    bgGradient.addColorStop(0, "#fdf2f8");
-    bgGradient.addColorStop(1, "#f0fdfa");
-    ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    function drawWave(color, amp, offset = 0) {
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.8;
-
-      const midY = canvas.height / 2;
-      const verticalPadding = 0.25; // 25% top/bottom padding
-      const effectiveHeight = canvas.height * (1 - verticalPadding * 2);
-      const sliceWidth = canvas.width / bufferLength;
-      let x = 0;
-
-      ctx.moveTo(0, midY);
-
-      for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[(i + offset) % bufferLength] / 128.0 - 1; // -1 to 1
-        const y = midY + v * amp * effectiveHeight / 2;
-
-        const nextV = dataArray[(i + 1 + offset) % bufferLength] / 128.0 - 1;
-        const nextY = midY + nextV * amp * effectiveHeight / 2;
-
-        const xc = x + sliceWidth / 2;
-        const yc = (y + nextY) / 2;
-
-        ctx.quadraticCurveTo(x, y, xc, yc);
-        x += sliceWidth;
-      }
-
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    }
-
-    // Layered rolling waves
-    drawWave("rgba(244,114,182,0.8)", 0.5, 0);
-    drawWave("rgba(125,211,252,0.6)", 0.6, 200);
-    drawWave("rgba(196,181,253,0.7)", 0.4, 400);
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
-  draw();
+  function drawStacks() {
+    animationId = requestAnimationFrame(drawStacks);
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update time display
+    if (currentSource) {
+      const currentTime = audioContext.currentTime - currentSource.startTime;
+      const duration = audioBuffer.duration;
+      timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+    }
+
+    const barWidth = canvas.width / bufferLength;
+    for (let i = 0; i < bufferLength; i++) {
+      const value = dataArray[i];
+      const percent = value / 255;
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, `rgba(244,114,182,${0.6 + percent*0.4})`);
+      gradient.addColorStop(0.5, `rgba(125,211,252,${0.6 + percent*0.4})`);
+      gradient.addColorStop(1, `rgba(196,181,253,${0.6 + percent*0.4})`);
+
+      ctx.fillStyle = gradient;
+      const barHeight = percent * canvas.height;
+      ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth * 0.8, barHeight);
+    }
+  }
+
+  // Track playback start time
+  currentSource.startTime = audioContext.currentTime;
+
+  drawStacks();
 
   currentSource.onended = () => {
     playButton.textContent = "Play";
     cancelAnimationFrame(animationId);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    timeDisplay.textContent = "00:00 / 00:00";
     currentSource = null;
   };
 });
