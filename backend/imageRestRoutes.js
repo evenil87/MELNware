@@ -5,6 +5,7 @@ export default function setupImageRestRoutes(app, db) {
     const { field, searchValue } = req.params;
     // check that field is a valid field, if not do nothing
     const validFields = {
+      all: 'all',
       file: '$.file',
       make: '$.metadata.Make',
       date: '$.metadata.CreateDate',
@@ -18,8 +19,11 @@ export default function setupImageRestRoutes(app, db) {
       res.json({ error: 'Invalid field name!' });
       return;
     }
-
-    const [rows] = await db.execute(`
+    // sök 'all'
+    let rows;
+    if (field === 'all') {
+      const like = '%' + searchValue + '%';
+    [rows] = await db.execute(`
   SELECT id,
          metaPhoto->>'$.file' AS File,
          metaPhoto->>'$.metadata.Make' AS Creator,
@@ -29,8 +33,26 @@ export default function setupImageRestRoutes(app, db) {
          metaPhoto->>'$.metadata.latitude' AS latitude,
          metaPhoto->>'$.metadata.longitude' AS longitude
   FROM photo
-  WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
-`, ['%' + searchValue + '%']);
+        WHERE LOWER(metaPhoto->>'$.file') LIKE LOWER(?)
+           OR LOWER(metaPhoto->>'$.metadata.Make') LIKE LOWER(?)
+           OR LOWER(metaPhoto->>'$.metadata.CreateDate') LIKE LOWER(?)
+           OR LOWER(metaPhoto->>'$.metadata.FileSource') LIKE LOWER(?)
+           OR LOWER(metaPhoto->>'$.metadata.Flash') LIKE LOWER(?)
+      `, [like, like, like, like, like]);
+    } else {
+      [rows] = await db.execute(`
+        SELECT id,
+               metaPhoto->>'$.file' AS File,
+               metaPhoto->>'$.metadata.Make' AS Creator,
+               metaPhoto->>'$.metadata.CreateDate' AS Date,
+               metaPhoto->>'$.metadata.FileSource' AS FileSource,
+               metaPhoto->>'$.metadata.Flash' AS Flash,
+               metaPhoto->>'$.metadata.latitude' AS latitude,
+               metaPhoto->>'$.metadata.longitude' AS longitude
+        FROM photo
+        WHERE LOWER(metaPhoto->>'${validFields[field]}') LIKE LOWER(?)
+      `, ['%' + searchValue + '%']);
+    }
 
     const result = rows.map(row => {
       // formatera datum
