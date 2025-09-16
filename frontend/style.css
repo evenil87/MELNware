@@ -7,53 +7,58 @@
   box-sizing: border-box;
 }
 
+/* Body and layout */
 body {
   margin: 0;
   font-size: 18px;
   background-color: #CD948B;
   font-family: 'Crimson Text';
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
+/* Header styling */
 header {
   background-color: #E5BCD2;
-  /* text-color */
   color: #8C6475;
-
   padding: 20px;
+}
 
-  a {
-    color: #8C6475;
-    text-decoration: none;
-    font-family: 'Roboto';
-  }
+header a {
+  color: #8C6475;
+  text-decoration: none;
+  font-family: 'Roboto';
 }
 
 .logo {
   font-size: 30px;
   margin-bottom: 10px;
-  font-family: 'Permanent Marker'
+  font-family: 'Permanent Marker';
 }
 
-nav {
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    display: inline-block;
-    padding-right: 10px;
-  }
+/* Navigation */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
+nav li {
+  display: inline-block;
+  padding-right: 10px;
+}
+
+/* Main content */
 main {
+  flex: 1;
   max-width: 700px;
   margin: 0 auto;
   background-color: #CD948B;
   padding: 20px;
 }
 
+/* Footer styling */
 footer {
   background-color: #7C3852;
   color: #CD948B;
@@ -62,18 +67,7 @@ footer {
   font-family: 'Roboto';
 }
 
-
-/* Sticky footer fix */
-body {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-}
-
+/* Headings */
 h1,
 h2,
 h3,
@@ -82,15 +76,18 @@ h4 {
   margin: 0;
 }
 
+/* Paragraphs */
 p {
   margin: 0;
   margin-bottom: 12px;
 }
 
+/* Input fields */
 input[type="text"] {
   width: 660px;
 }
 
+/* Articles */
 article {
   margin-top: 20px;
   padding: 20px;
@@ -101,6 +98,7 @@ article {
 article:nth-child(even) {
   background-color: #edf77c;
 }
+
 article:nth-child(odd) {
   background-color: #e1d4d0;
 }
@@ -109,13 +107,56 @@ article h3 {
   font-variant: small-caps;
 }
 
+/* Preformatted text */
 pre {
   overflow-x: auto;
   white-space: pre-wrap;
   font-size: 14px;
 }
 
+/* Form labels */
 label {
   display: block;
   margin: 20px 0;
+}
+
+/* --- Music Player Styles --- */
+/* Play button */
+.btn-play.pastel {
+  display: inline-block; /* ensures left alignment */
+  margin: 4px 0; /* space above and below */
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: none;
+  background: linear-gradient(135deg, #f9a8d4, #a5f3fc, #c7d2fe);
+  background-size: 200% 200%;
+  color: #1e293b;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  transition: background-position 0.3s ease, transform 0.2s ease;
+  text-align: left;
+}
+
+.btn-play.pastel:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+}
+
+/* Waveform canvas */
+canvas.waveform {
+  display: block;
+  width: 100%;
+  height: 70px;
+  margin-top: 4px; /* small gap under button */
+  border-radius: 8px;
+}
+
+/* Music player container (if used) */
+.music-player {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* tight spacing */
+  align-items: flex-start; /* left-align the play button */
 }
