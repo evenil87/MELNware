@@ -4,6 +4,7 @@ export function musicSearchPageContent() {
     <label>
       Search:
       <select name="music-meta-field">
+        <option value="all">All</option>
         <option value="artist">Artist</option>
         <option value="title">Titel</option>
         <option value="album">Album</option>
@@ -48,7 +49,7 @@ async function musicSearch() {
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     const results = await response.json();
 
-    let html = '';
+    let html = `<p>${results.length} results</p>`;
     results.forEach(({ id, fileName, title, artist, album, genre, year }) => {
       html += `
         <article>

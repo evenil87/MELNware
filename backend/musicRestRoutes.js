@@ -4,11 +4,33 @@ export default function setupMusicRestRoutes(app, db) {
   app.get('/api/music-search/:field/:searchValue', async (req, res) => {
     const { field, searchValue } = req.params;
 
-    if (!['title', 'album', 'artist', 'genre'].includes(field)) {
+    if (!['all', 'title', 'album', 'artist', 'genre'].includes(field)) {
       return res.status(400).json({ error: 'Invalid field name!' });
     }
 
     try {
+      // Search multiple fields if "all"
+      if (field === 'all') {
+        const like = `%${searchValue}%`;
+      const [result] = await db.execute(
+        `SELECT id,
+           metaMusic->>'$.file' AS fileName,
+           metaMusic->>'$.common.title' AS title,
+           metaMusic->>'$.common.artist' AS artist,
+           metaMusic->>'$.common.album' AS album,
+           metaMusic->>'$.common.genre[0]' AS genre,
+           metaMusic->>'$.common.year' AS year
+FROM music
+           WHERE LOWER(metaMusic->>'$.common.title')  LIKE LOWER(?)
+              OR LOWER(metaMusic->>'$.common.artist') LIKE LOWER(?)
+              OR LOWER(metaMusic->>'$.common.album')  LIKE LOWER(?)
+              OR LOWER(metaMusic->>'$.common.genre[0]') LIKE LOWER(?)`,
+        [like, like, like, like]
+      );
+        return res.json(result);
+      }
+
+      // or search in chosen field
       const [result] = await db.execute(
         `SELECT id,
            metaMusic->>'$.file' AS fileName,
