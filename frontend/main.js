@@ -1,4 +1,5 @@
-import { startPageContent } from './startPage.js';
+import { startPageContent } from './start-page.js';
+import { imageSearchPageContent } from './photoSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
 
 // Click on menu link
@@ -11,6 +12,7 @@ document.body.addEventListener('click', event => {
   let linkText = navLink.textContent;
   // show correct content depending on menu choice
   showContent(linkText);
+  console.log('linkText:', linkText);
 });
 
 // Function to show page content
@@ -18,6 +20,9 @@ function showContent(label) {
   let content;
   if (label === 'Start') {
     content = startPageContent();
+  }
+  else if (label === 'Search') {
+    content = imageSearchPageContent();
   }
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();

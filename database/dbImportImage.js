@@ -16,18 +16,22 @@ const files = fs.readdirSync('./frontend/photos/').filter(x => ['.jpg', '.jpeg']
 // Nedanför loopar vi igenom alla filer i mappen, för varje fil läser vi in metadata med hjälp av exifr
 // Sedan sparar vi metadata i databasen
 for (let file of files) {
-  let metadataphotos = await exifr.parse('./frontend/photos/' + file);
+  let metadata = await exifr.parse('./frontend/photos/' + file, { all: true });
 
   // Om metadataphotos är null eller undefined, används en tom {}
-  let meta = metadataphotos ?? {};
+  let meta = {
+    file: file,
+    metadata: metadata ?? {}
+  };
+
   // Gör om metadata-objektet till en JSON-sträng
   let json = JSON.stringify(meta);
 
   // Spara JSON-strängen i databasen
   let [result] = await database.execute(`
-    INSERT INTO photo (metaPhotos) VALUES (?)`, [json]);
+    INSERT INTO photo (metaPhoto) VALUES (?)`, [json]);
   // console-loggen är mest för att se att något händer, och se resultatet i terminalen
-  // console.log(file, result);
+  console.log(file, result);
 }
 // Avsluta programmet när allt är klart
 process.exit();

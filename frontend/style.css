@@ -117,6 +117,45 @@ label {
   margin: 20px 0;
 }
 
+.btn-show-all-image-metadata.already-shown {
+  .show {
+    display: none;
+  }
+}
+
+.btn-show-all-image-metadata:not(.already-shown) {
+  .hide {
+    display: none;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.metaTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.metaTable th,
+.metaTable td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.metaTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
 label:not(.checkbox-label) {
   display: block;
   margin: 20px 0;

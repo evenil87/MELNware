@@ -16,3 +16,14 @@ let json = JSON.stringify(metadataList, null, 2);
 console.log(metadataList);
 
 fs.writeFileSync('./metadataphotos.json', json, 'utf-8');
+
+
+/*
+const result = rows.map(row => ({
+  ...row,
+  metadata: {
+    latitude: row.latitude,
+    longitude: row.longitude
+  }
+}));
+*/
