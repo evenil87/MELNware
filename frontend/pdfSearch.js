@@ -181,7 +181,7 @@ async function pdfSearch() {
   let sortSelect = document.querySelector('select[name="pdf-sort"]');
   let sort = sortSelect.value || 'default';
 
-  // 🔹 skicka med sort i URL:en
+  // Lägg till sorteringsval i URL:en
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}&sort=${sort}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
