@@ -1,6 +1,5 @@
 // Hämta express för att kunna skapa en webbserver
 import express from 'express';
-import express from 'express';
 // Importera databasuppgifter från en separat fil
 import dbCreds from './db-credentials.js';
 // Hämta databasmodulen för MySQL

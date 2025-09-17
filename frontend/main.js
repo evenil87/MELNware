@@ -36,6 +36,9 @@ function showContent(label) {
   else if (label === 'Search music') {
     content = musicSearchPageContent();
   }
+  else if (label === 'Search powerpoints') {
+    content = powerPointSearchPageContent();
+  }
   document.querySelector('main').innerHTML = content;
 
   // Delegate event binding to the page module
