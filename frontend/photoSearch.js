@@ -61,7 +61,9 @@ document.body.addEventListener('click', async event => {
   // lägger till det nyss skapade pre-elementet efter knappen
   button.after(pre);
   button.classList.add('already-shown');
+
 });
+
 
 
 // nedan följer själva sökfunktionen som gör sökningen och uppdaterar sökresultaten för bilder
