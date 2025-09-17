@@ -1,13 +1,12 @@
-console.log("main is loaded");
 import { startPageContent } from './startPage.js';
 import { imageSearchPageContent } from './photoSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
+import { musicSearchPageContent, bindMusicSearchEvents } from './musicSearch.js';
 
-// Click on menu link
+// Handle menu clicks
 document.body.addEventListener('click', event => {
-  let navLink = event.target.closest('header nav a');
-  if (!navLink) { return; }
-  // don't try to follow the link in the a tag
+  const navLink = event.target.closest('a[data-page]');
+  if (!navLink) return;
   event.preventDefault();
   // read the text in the link
   let linkText = navLink.textContent;
@@ -16,20 +15,23 @@ document.body.addEventListener('click', event => {
   console.log('linkText:', linkText);
 });
 
-// Function to show page content
-function showContent(label) {
-  let content;
-  if (label === 'Start') {
+// Show page content
+function showContent(page) {
+  let content = '';
+  if (page === 'start') {
     content = startPageContent();
   }
-  else if (label === 'Search photo') {
-    content = imageSearchPageContent();
+  else if (label === 'Search music') {
+    content = musicSearchPageContent();
   }
-  else if (label === 'Search PDF') {
-    content = pdfSearchPageContent();
-  }
+
   document.querySelector('main').innerHTML = content;
+
+  // Delegate event binding to the page module
+  if (page === 'music-search') {
+    bindMusicSearchEvents();
+  }
 }
 
-// When the page loads
-showContent('Start');
+// Initial page load
+showContent('start');
