@@ -1,4 +1,4 @@
-// Returnerar HTML-innehåll för musik-sök sidan
+// Funktion som returnerar HTML + CSS för musik-sök sidan
 export function musicSearchPageContent() {
   return `
     <h1>Search Music</h1>
@@ -18,7 +18,7 @@ export function musicSearchPageContent() {
     <section class="music-search-result"></section>
 
     <style>
-      /* Stil för pastel-färgad play-knapp */
+      /* --- Play-knapp --- */
       .btn-play.pastel {
         font-size: 1rem;
         padding: 8px 18px;
@@ -34,11 +34,11 @@ export function musicSearchPageContent() {
         display: inline-block;
         margin: 4px 0; 
       }
-      /* Hover-effekt för play-knapp */
       .btn-play.pastel:hover {
         background-position: 100% 0;
         transform: translateY(-2px);
       }
+
       /* Canvas för ljudvisualisering */
       canvas.waveform {
         display: block;
@@ -47,17 +47,20 @@ export function musicSearchPageContent() {
         margin-top: 4px;
         border-radius: 8px;
       }
-      /* Tidvisning under play-knappen */
+
+      /* Tidvisning */
       .time-display {
         font-size: 14px;
         color: #333;
         margin-top: 2px;
       }
+
       /* Avstånd mellan sökresultaten */
       .music-search-result article {
         margin-bottom: 24px;
       }
-      /* Stil för metadata-tabell */
+
+      /* Metadata-tabell */
       table.metadata-table {
         border-collapse: collapse;
         margin-top: 4px;
@@ -74,6 +77,52 @@ export function musicSearchPageContent() {
         background: #f0f0f0;
         width: 35%;
       }
+
+      /* Neon-pastell volymkontroll */
+      .neon-volume {
+        width: 150px;
+        height: 10px;
+        border-radius: 5px;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        background: linear-gradient(90deg, #f9a8d4 0%, #a5f3fc 50%, #c7d2fe 100%);
+        transition: background 0.2s ease;
+        margin-top: 4px;
+      }
+      .neon-volume::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #1e293b;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,255,255,0.6);
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+      }
+      .neon-volume::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 12px rgba(255,255,255,0.9);
+      }
+      .neon-volume::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #1e293b;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(255,255,255,0.6);
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+      }
+
+      .music-player {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+      }
     </style>
   `;
 }
@@ -82,23 +131,19 @@ export function musicSearchPageContent() {
 export function bindMusicSearchEvents() {
   const inputField = document.querySelector('input[name="music-search"]');
   const selectField = document.querySelector('select[name="music-meta-field"]');
-
   if (!inputField || !selectField) return;
 
-  // Kör musik-sökning vid tangenttryck eller ändring i select
   inputField.addEventListener('keyup', musicSearch);
   selectField.addEventListener('change', musicSearch);
 }
 
-// Utför musik-sökning och renderar resultat
+// Utför musik-sökning
 async function musicSearch() {
   const inputField = document.querySelector('input[name="music-search"]');
   const selectField = document.querySelector('select[name="music-meta-field"]');
   const resultContainer = document.querySelector('.music-search-result');
-
   if (!inputField || !selectField || !resultContainer) return;
 
-  // Töm resultat om sökfältet är tomt
   if (inputField.value.trim() === '') {
     resultContainer.innerHTML = '';
     return;
@@ -108,7 +153,6 @@ async function musicSearch() {
   const searchValue = encodeURIComponent(inputField.value.trim());
 
   try {
-    // Hämta sökresultat från backend-API
     const response = await fetch(`/api/music-search/${field}/${searchValue}`);
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     const results = await response.json();
@@ -128,9 +172,13 @@ async function musicSearch() {
           <div class="time-display">00:00 / 00:00</div>
           <canvas class="waveform" data-file="/music/${fileName}"></canvas>
 
-          <!-- Ladda ner-länk -->
+          <!-- Neon-volymkontroll -->
+          <label>
+            Volume:
+            <input type="range" min="0" max="1" step="0.01" value="1" class="neon-volume" data-file="/music/${fileName}">
+          </label>
+
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
-          <!-- Visa all metadata-knapp -->
           <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
         </article>
       `;
@@ -142,16 +190,14 @@ async function musicSearch() {
   }
 }
 
-// Rekursiv funktion för att skapa tabellrader för nested metadata
+// Rekursiv funktion för metadata-tabell
 function createTableRows(data, parentKey = '') {
   const rows = [];
-
   for (const key in data) {
     const value = data[key];
     const fullKey = parentKey ? `${parentKey} → ${key}` : key;
 
     const tr = document.createElement('tr');
-
     const tdKey = document.createElement('td');
     tdKey.textContent = fullKey;
     tdKey.classList.add('key');
@@ -175,11 +221,10 @@ function createTableRows(data, parentKey = '') {
       rows.push(tr);
     }
   }
-
   return rows;
 }
 
-// Visa eller dölj all metadata som tabell (rekursiv)
+// Visa/dölj metadata
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-music-metadata');
   if (!button) return;
@@ -200,8 +245,6 @@ document.body.addEventListener('click', async event => {
 
     let table = document.createElement('table');
     table.classList.add('metadata-table');
-
-    // Skapa tabellrader rekursivt
     const rows = createTableRows(result);
     rows.forEach(tr => table.appendChild(tr));
 
@@ -214,25 +257,23 @@ document.body.addEventListener('click', async event => {
   }
 });
 
-// Pastel-färgade ljudvisualiseringar och uppspelning
+// --- Musikspelare med waveform och neon-volym ---
 let audioContext;
 let currentSource;
 let analyser;
+let gainNode;
 let animationId;
 
 document.body.addEventListener('click', async event => {
   const playButton = event.target.closest('.btn-play');
   if (!playButton) return;
 
-  const canvas = playButton.nextElementSibling.nextElementSibling; // Canvas för visualisering
-  const timeDisplay = playButton.nextElementSibling; // Tidvisning
+  const canvas = playButton.nextElementSibling.nextElementSibling;
+  const timeDisplay = playButton.nextElementSibling;
   const file = playButton.getAttribute('data-file');
 
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-  // Stoppa aktuell uppspelning om det finns någon
   if (currentSource) {
     currentSource.stop();
     cancelAnimationFrame(animationId);
@@ -242,54 +283,47 @@ document.body.addEventListener('click', async event => {
     return;
   }
 
-  // Ladda ljudfil
   const response = await fetch(file);
   const arrayBuffer = await response.arrayBuffer();
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-  // Skapa ljudkälla
   currentSource = audioContext.createBufferSource();
   currentSource.buffer = audioBuffer;
 
-  // Skapa analyser för frekvensdata
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 256;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
-  // Koppla ihop ljudkälla med analyser och destination
-  currentSource.connect(analyser);
-  analyser.connect(audioContext.destination);
+  gainNode = audioContext.createGain();
 
-  // Starta uppspelning
+  currentSource.connect(analyser);
+  analyser.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+
   currentSource.start();
   playButton.textContent = "Stop";
 
   const ctx = canvas.getContext('2d');
 
-  // Formatera sekunder som mm:ss
   function formatTime(seconds) {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = Math.floor(seconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
 
-  // Rita pastel-färgade ljudstaplar
   function drawStacks() {
     animationId = requestAnimationFrame(drawStacks);
     analyser.getByteFrequencyData(dataArray);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Uppdatera tidvisning
     if (currentSource) {
       const currentTime = audioContext.currentTime - currentSource.startTime;
-      const duration = audioBuffer.duration;
-      timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+      timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(audioBuffer.duration)}`;
     }
 
     const barWidth = canvas.width / bufferLength;
 
-    // Rita varje stapel med gradient
     for (let i = 0; i < bufferLength; i++) {
       const value = dataArray[i];
       const percent = value / 255;
@@ -305,12 +339,10 @@ document.body.addEventListener('click', async event => {
     }
   }
 
-  // Spara uppspelningens starttid
   currentSource.startTime = audioContext.currentTime;
 
   drawStacks();
 
-  // Återställ när uppspelning är slut
   currentSource.onended = () => {
     playButton.textContent = "Play";
     cancelAnimationFrame(animationId);
@@ -318,4 +350,15 @@ document.body.addEventListener('click', async event => {
     timeDisplay.textContent = "00:00 / 00:00";
     currentSource = null;
   };
+});
+
+// Neon-volym slider
+document.body.addEventListener('input', event => {
+  const volumeSlider = event.target.closest('.neon-volume');
+  if (!volumeSlider) return;
+  if (gainNode) gainNode.gain.value = parseFloat(volumeSlider.value);
+
+  // Intensifiera gradient baserat på volym
+  const percent = parseFloat(volumeSlider.value);
+  volumeSlider.style.background = `linear-gradient(90deg, rgba(249,168,212,${0.3+percent*0.7}) 0%, rgba(165,243,252,${0.3+percent*0.7}) 50%, rgba(199,210,254,${0.3+percent*0.7}) 100%)`;
 });
