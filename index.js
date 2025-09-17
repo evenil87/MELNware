@@ -9,7 +9,7 @@ import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
 import setupPowerPointRestRoutesAllMeta from './backend/powerPointRestRoutesAllMeta.js';
 import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
-// import setupMusicRestRoutes from './backend/musicRestRoutes.js';
+import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 import setupimageRestRoutes from './backend/imageRestRoutes.js';
 
 // Skapa en databasanslutning med hjälp av uppgifterna i db-credentials.js
@@ -23,12 +23,14 @@ setupPowerPointRestRoutes(app, db);
 setupPowerPointRestRoutesAllMeta(app, db);
 setupPowerPointDownloadRoute(app, db);
 setupPdfRestRoutes(app, db);
-// setupMusicRestRoutes(app, db);
+setupMusicRestRoutes(app, db);
 setupimageRestRoutes(app, db);
 
 
 // Låt express hantera statiska filer i frontend-mappen
 app.use(express.static('frontend'));
+//app.use('/music', express.static('frontend/music'));
+
 
 // Starta servern på port 3000
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));

@@ -5,12 +5,16 @@ import { musicSearchPageContent } from './musicSearch.js';
 import { powerPointSearchPageContent } from './powerPointSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
 import { imageSearchPageContent } from './photoSearch.js';
-
+import { musicSearchPageContent, bindMusicSearchEvents } from './musicSearch.js';
 // Hantera menyval i headern och visa rätt innehåll i main
 // Lyssna på klick i hela bodyn
 document.body.addEventListener('click', event => {
   let navLink = event.target.closest('header nav a');
   if (!navLink) { return; }
+  //const navLink = event.target.closest('a[data-page]');
+  //if (!navLink) return;
+  //const page = navLink.dataset.page;
+  //showContent(page);
   event.preventDefault();
   // Läs texten i länken
   let linkText = navLink.textContent;
@@ -26,9 +30,6 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Search music') {
-    content = musicSearchPageContent();
-  }
   else if (label === 'Search powerpoints') {
     content = powerPointSearchPageContent();
   }
@@ -37,8 +38,16 @@ function showContent(label) {
   }
   else if (label === 'Search') {
     content = imageSearchPageContent();
+  } // JUSTERA PAGE=== TILL LABEL ISTÄLLET byta namn? musicsearch till Search music
+  else if (page === 'music-search') {
+    content = musicSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
+
+  // Delegate event binding to the page module
+  if (page === 'music-search') {
+    bindMusicSearchEvents();
+  }
 }
 
 // Visa startsidan vid laddning
