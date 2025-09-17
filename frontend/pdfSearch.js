@@ -1,4 +1,4 @@
-// En funktion för att skapa pdf search-sidoinnehåll
+// Funktion som returnerar pdf-search som HTML
 export function pdfSearchPageContent() {
   return `
 <h1>Search PDF</h1>
@@ -49,71 +49,77 @@ export function pdfSearchPageContent() {
     `;
 }
 
-// Lyssna efter key ups i pdf-search inputfältet
+// Lyssna på key ups i pdf-search inputfältet
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="pdf-search"]');
   if (!inputField) return;
   pdfSearch();
 });
 
-// Lyssna efter ändringar i dropdowns och filters
+// Lyssna på ändringar i dropdowns och filters
 document.body.addEventListener('change', event => {
+  // Ifall användaren byter sökfält (all, title, author)
   if (event.target.matches('select[name="pdf-meta-field"]')) {
     pdfSearch();
   }
+  // Ifall användaren ändrar filter (sidantal, datum)
   if (event.target.matches('input[name="pdf-minPages"], input[name="pdf-maxPages"], input[name="pdf-fromDate"], input[name="pdf-toDate"]')) {
     pdfSearch();
   }
 });
 
-// Eventlyssnare för advanced search-sektionen
+// Lyssnar på klick på 'Advanced search'-knappen
 document.body.addEventListener('click', event => {
   let button = event.target.closest('.btn-advanced-search');
   if (!button) return;
   let section = document.querySelector('.advanced-search');
   if (!section) return;
+  // Kolla om advanced search-sektionen redan visas
   if (button.classList.contains('already-shown')) {
-    // Göm advanced search-sektionen
+    // Dölj advanved search-knappen om sektionen visas
     button.classList.remove('already-shown');
     section.style.display = 'none';
   } else {
-    // Visa advanced search-sektion
+    // Visa advanced search-knappen om sektionen är dold
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
 
-// Eventlyssnare för knappen "show all metadata"
+// Lyssnar på klick på knappen "show all metadata" i sökresultaten
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-pdf-metadata');
   if (!button) { return; }
-  // om metadatan redan syns
+  // Dölj knappen om metadatan redan visas
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
     let pre = button.nextElementSibling;
     pre.remove();
     return;
   }
-  // Om vi har klickat på metadata-knappen
+
+  // Hämta detaljerad metadata om vi har klickat på show metadata-knappen
   let id = button.getAttribute('data-id');
-  // Fetch detaljerad metadata
   let rawResponse = await fetch('/api/pdf-all-meta/' + id);
   let result = await rawResponse.json();
-  // Skapa ett pre element
+
+  // Skapa ett pre element för att visa metadata som JSON
   let pre = document.createElement('pre');
   pre.innerHTML = JSON.stringify(result, null, '  ');
+
   // Lägg till ett pre element efter metadata-knappen
   button.after(pre);
-  // Lägg till en klass som visar att metadatan redan syns
+
+  // Lägg till en klass som visar att metadatan redan visas
   button.classList.add('already-shown');
 });
 
-// Pdf-sökning (söker vid key ups i sölfältet och ändringar i dropdown
+// Funktion som gör själva sökningen mot API:et
 async function pdfSearch() {
-  // Få sökresultat från valt input-fält
+  // Läs in värdet från sökfältet
   let inputField = document.querySelector('input[name="pdf-search"]');
   let query = inputField.value.trim();
-
+  // Läs in filtervärden
   let fromDate = document.querySelector('input[name="pdf-fromDate"]').value;
   let toDate = document.querySelector('input[name="pdf-toDate"]').value;
 
@@ -123,20 +129,24 @@ async function pdfSearch() {
   let fieldSelect = document.querySelector('select[name="pdf-meta-field"]');
   let field = fieldSelect.value || 'all';
 
-  // Bygg URL:en med query-parametrar
+  // Bygg upp URL:en med query-parametrar
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
 
-  // Få resultaten och visa
+  // Hämta resultaten från servern
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();
   
+  // Bygg HTML för sökresultaten
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
     of result) {
+    // Formatera datum
     let YYMMDD = year && month && day ? `${year}-${month}-${day}` : 'Unknown';
     let modYYMMDD = modYear && modMonth && modDay ? `${modYear}-${modMonth}-${modDay}` : 'Unknown';
+    
+    // Lägg till HTML för varje sökträff
     resultAsHtml += `
       <article>
         <h2>${title || 'Unknown'}</h2>
@@ -154,5 +164,6 @@ async function pdfSearch() {
     `;
   }
 
+  // Visa resultaten på sidan
   document.querySelector('.pdf-search-result').innerHTML = resultAsHtml;
 }

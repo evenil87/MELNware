@@ -1,27 +1,34 @@
 import path from 'path';
 import fs from 'fs';
 
+// Funktion som sätter upp restroutes för pdf-search, metadata och nedladdning
 export default function setupPdfRestRoutes(app, db) {
-  // få sökvägen
+ 
+  // Route: sök pdf i vår databas
   app.get('/api/pdf-search/:field/:searchValue', async (req, res) => {
     try {
       const { field, searchValue } = req.params;
       const { from, to, minPages, maxPages } = req.query;
-
+      
+      // Kolla att 'field' är valid, annars returnera felmeddelande
       if (!['all', 'title', 'author', 'creator', 'date', 'numpages'].includes(field)) {
         return res.status(400).json({ error: 'Invalid field name!' });
       }
 
-      // CreationDate är just nu i D:YYYYMMDD så vi ändrar till ett mer lättläst format
-      // så att vi kan söka datumintervall
+      // Hantera datumintervall (till och från)
+      // PDF:er lagrar datum som D:YYYYMMDD
+      // Vi formaterar CreationDate till ett mer lättläst format
+      // STR_TO_DATE används för att kunna filtrera
       let dateFilter = '';
-      let params = [];
+      let params = []; // Används för prepared statements för att undvika SQL-injektion
       if (from && to) {
         dateFilter = ` AND STR_TO_DATE(SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 8), '%Y%m%d')
                        BETWEEN ? AND ?`;
+        // Formatera YYYY-MM-DD till YYYYMMDD 
         params.push(from.replace(/-/g, ''), to.replace(/-/g, ''));
       }
 
+      // Hantera sidantal (min och max)
       let pagesFilter = '';
       if (minPages) {
         pagesFilter += ' AND CAST(metaPdf->>"$.numpages" AS UNSIGNED) >= ?';
@@ -32,9 +39,9 @@ export default function setupPdfRestRoutes(app, db) {
         params.push(maxPages);
       }
 
-      // Sök 'all' (titel och författare)
+      // Sök både titel och författare om field === 'all'
       if (field === 'all') {
-        const like = '%' + searchValue + '%';
+        const like = '%' + searchValue + '%'; // Wildcard
         const [result] = await db.execute(
           `
           SELECT id,
@@ -57,10 +64,10 @@ export default function setupPdfRestRoutes(app, db) {
         `,
           [like, like, ...params]
         );
-        return res.json(result);
+        return res.json(result); // Returnera resultat som JSON
       }
 
-      // Sök efter sidantal och datumintervall
+      // Bygg rätt JSON-path för databasen om vi söker i ett specifikt fält
       const queryPath =
         field === 'numpages'
           ? "metaPdf->>'$.numpages'"
@@ -68,6 +75,7 @@ export default function setupPdfRestRoutes(app, db) {
             ? "metaPdf->>'$.info.CreationDate'"
             : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
 
+      // Kör sökningen mot databasen
       const [result] = await db.execute(
         `
         SELECT id,
@@ -90,14 +98,14 @@ export default function setupPdfRestRoutes(app, db) {
         ['%' + searchValue + '%', ...params]
       );
 
-      res.json(result);
+      res.json(result); // Returnera resultat som JSON
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
     }
   });
 
-  // Metadata route
+  // Route som hämtar metadata för specifik PDF
   app.get('/api/pdf-all-meta/:id', async (req, res) => {
     try {
       const { id } = req.params;
@@ -109,11 +117,13 @@ export default function setupPdfRestRoutes(app, db) {
     }
   });
 
-  // Ladda ner filen
+  // Route för nedladdning av pdf-fil
   const PDF_DIR = path.resolve('frontend/pdfs');
 
+  // Förhindrar path traversal attacks
   function safeJoinPdf(fileName) {
     const full = path.resolve(PDF_DIR, fileName);
+    // Kontrollera att filen ligger inom PDF_DIR
     if (!full.startsWith(PDF_DIR + path.sep)) return null;
     return full;
   }
@@ -122,7 +132,7 @@ export default function setupPdfRestRoutes(app, db) {
     try {
       const { id } = req.params;
 
-      // Få filnamn för givet id
+      // Hämta filnamn för angivet id från databasen
       const [rows] = await db.execute(
         `SELECT metaPdf->>'$.file' AS fileName FROM pdf WHERE id = ?`,
         [id]
@@ -131,13 +141,15 @@ export default function setupPdfRestRoutes(app, db) {
       const fileName = rows?.[0]?.fileName;
       if (!fileName) return res.status(404).send('Not found');
 
+      // Bygg sökväg och kontrollera att filen finns
       const filePath = safeJoinPdf(fileName);
       if (!filePath || !fs.existsSync(filePath)) {
         return res.status(404).send('Not found');
       }
 
+      // Sätt headers och skicka filen för nedladdning
       res.setHeader('Content-Type', 'application/pdf');
-      res.download(filePath, path.basename(fileName));
+      res.download(filePath, path.basename(fileName)); // Laddar ner med rätt filnamn
     } catch (err) {
       console.error(err);
       res.status(500).send('Server error');
