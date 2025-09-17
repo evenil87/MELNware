@@ -10,11 +10,10 @@ import setupPowerPointRestRoutesAllMeta from './backend/powerPointRestRoutesAllM
 import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 // import setupMusicRestRoutes from './backend/musicRestRoutes.js';
-// import setupimageRestRoutes from './backend/imageRestRoutes.js';
+import setupimageRestRoutes from './backend/imageRestRoutes.js';
 
 // Skapa en databasanslutning med hjälp av uppgifterna i db-credentials.js
 const db = await mysql.createConnection(dbCreds);
-
 
 // Skapa en webbserver med express kallad app 
 const app = express();
@@ -25,7 +24,7 @@ setupPowerPointRestRoutesAllMeta(app, db);
 setupPowerPointDownloadRoute(app, db);
 setupPdfRestRoutes(app, db);
 // setupMusicRestRoutes(app, db);
-// setupimageRestRoutes(app, db);
+setupimageRestRoutes(app, db);
 
 
 // Låt express hantera statiska filer i frontend-mappen

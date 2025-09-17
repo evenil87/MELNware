@@ -4,6 +4,7 @@ import { startPageContent } from './startPage.js';
 import { musicSearchPageContent } from './musicSearch.js';
 import { powerPointSearchPageContent } from './powerPointSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
+import { imageSearchPageContent } from './photoSearch.js';
 
 // Hantera menyval i headern och visa rätt innehåll i main
 // Lyssna på klick i hela bodyn
@@ -15,8 +16,7 @@ document.body.addEventListener('click', event => {
   let linkText = navLink.textContent;
   // Visa rätt innehåll i main
   showContent(linkText);
-  // console.log('linkText:', linkText);
-
+  console.log('linkText:', linkText);
 });
 
 
@@ -34,6 +34,9 @@ function showContent(label) {
   }
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();
+  }
+  else if (label === 'Search') {
+    content = imageSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
 }
