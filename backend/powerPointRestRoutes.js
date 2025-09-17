@@ -3,7 +3,7 @@ export default function setupPowerPointRestRoutes(app, db) {
   app.get('/api/powerPointSearch/:field/:searchValue', async (req, res) => {
     const { field, searchValue } = req.params;
 
-    // whitelist fält -> JSON-path
+    // Validera fältet som söks på
     const validFields = {
       title: '$.title',
       company: '$.company',
@@ -11,6 +11,7 @@ export default function setupPowerPointRestRoutes(app, db) {
       creationDate: '$.creationDate'
     };
 
+    // Om fältet inte är giltigt, skicka felmeddelande
     if (!validFields[field]) {
       res.status(400).json({ error: 'Invalid field name!' });
       return;
@@ -18,41 +19,39 @@ export default function setupPowerPointRestRoutes(app, db) {
 
     const path = validFields[field];
 
-    // bygg SQL beroende på fält
+    // Bygg SQL-frågan baserat på fältet
     let whereClause;
     let orderBy;
     let param;
 
+    // Speciell hantering för creationDate (ingen wildcard i början)
     if (field === 'creationDate') {
-      // prefix-sökning för datum (201 -> 2010-2019)
       whereClause = `metaPowerPoint->>'$.creationDate' LIKE ?`;
       orderBy = `CAST(metaPowerPoint->>'$.creationDate' AS CHAR) ASC`;
-      param = `${searchValue}%`; // wildcard bara i slutet
+      param = `${searchValue}%`; // Wildcard i slutet
     } else {
-      // case-insensitive wildcard före och efter
+      // Hantering för andra fält
       whereClause = `LOWER(metaPowerPoint->>'${path}') LIKE LOWER(?)`;
       orderBy = `title ASC`;
-      param = `%${searchValue}%`; // wildcard båda sidor
+      param = `%${searchValue}%`; // Wildcard båda sidor
     }
-
+    // SQL-frågan
     const query = `
       SELECT
         id,
-        metaPowerPoint->>'$.title'        AS title,
-        metaPowerPoint->>'$.company'      AS company,
-        metaPowerPoint->>'$.slideCount'   AS slides,
-        CASE
-        WHEN metaPowerPoint->>'$.creationDate' = '1601-01-01 00:00' THEN 'unidentified'
-          ELSE metaPowerPoint->>'$.creationDate'
-        END                             AS date,
-        metaPowerPoint->>'$.fileSize'     AS size,
-        metaPowerPoint->>'$.original'     AS URL,
-        metaPowerPoint->>'$.fileName'     AS fileName
+        metaPowerPoint->>'$.title' AS title,
+        metaPowerPoint->>'$.company' AS company,
+        metaPowerPoint->>'$.slideCount' AS slides,
+        metaPowerPoint->>'$.creationDate' AS date,
+        metaPowerPoint->>'$.fileSize' AS size,
+        metaPowerPoint->>'$.original' AS URL,
+        metaPowerPoint->>'$.fileName' AS fileName
       FROM powerPoint
       WHERE ${whereClause}
       ORDER BY ${orderBy}
     `;
 
+    // Kör frågan och skicka resultatet
     try {
       const [rows] = await db.execute(query, [param]);
       res.json(rows);

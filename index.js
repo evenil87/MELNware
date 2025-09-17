@@ -1,10 +1,10 @@
-// Get express so that we can create a web server.
+// Hämta express för att kunna skapa en webbserver
 import express from 'express';
-// Import the git-ignored db credentials.
+// Importera databasuppgifter från en separat fil
 import dbCreds from './db-credentials.js';
-// Get the database driver.
+// Hämta databasmodulen för MySQL
 import mysql from 'mysql2/promise';
-// Import rest routes from backend folder.
+// Importera alla rest-routes från backend-mappen
 import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
 import setupPowerPointRestRoutesAllMeta from './backend/powerPointRestRoutesAllMeta.js';
 import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
@@ -12,14 +12,14 @@ import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 // import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 // import setupimageRestRoutes from './backend/imageRestRoutes.js';
 
-// Create the connection to database
+// Skapa en databasanslutning med hjälp av uppgifterna i db-credentials.js
 const db = await mysql.createConnection(dbCreds);
 
 
-// Create a web server called app.
+// Skapa en webbserver med express kallad app 
 const app = express();
 
-// Add rest routes for music search.
+// Lägg till rest-routes i app och skicka med databasanslutningen db 
 setupPowerPointRestRoutes(app, db);
 setupPowerPointRestRoutesAllMeta(app, db);
 setupPowerPointDownloadRoute(app, db);
@@ -28,8 +28,8 @@ setupPdfRestRoutes(app, db);
 // setupimageRestRoutes(app, db);
 
 
-// Let Express serve all the content from frontend folder
+// Låt express hantera statiska filer i frontend-mappen
 app.use(express.static('frontend'));
 
-// Start the web server at port 3000.
+// Starta servern på port 3000
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));

@@ -1,4 +1,4 @@
-// Importera filsystemmodulen
+// Importerar nödvändiga moduler
 import fs from 'fs';
 
 // Läs JSON från fil med felhantering
@@ -16,7 +16,7 @@ function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
 }
 
-// Konverterar nycklar rekursivt
+// Konverterar alla keys i ett objekt (och dess barn) till camelCase
 function convertKeysToCamelCase(obj) {
   if (Array.isArray(obj)) {
     return obj.map(item => convertKeysToCamelCase(item));

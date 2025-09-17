@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Permanent+Marker&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* Use box sizing - padding is included in widths */
+/* Box storlek för alla element */
 *,
 *:before,
 *:after {
   box-sizing: border-box;
 }
+
+/* Grundläggande stilar för body, header, nav, main och footer */
 
 body {
   margin: 0;
@@ -28,6 +30,7 @@ header {
   }
 }
 
+/* Logo stil */
 .logo {
   font-size: 30px;
   margin-bottom: 10px;
@@ -63,7 +66,7 @@ footer {
 }
 
 
-/* Sticky footer fix */
+/* Sticky footer hantering */
 body {
   display: flex;
   min-height: 100vh;
@@ -87,10 +90,12 @@ p {
   margin-bottom: 12px;
 }
 
+/* Justerar storlek på textfält */
 input[type="text"] {
   width: 660px;
 }
 
+/* Specifika stilar för olika element */
 article {
   margin-top: 20px;
   padding: 20px;
@@ -98,55 +103,46 @@ article {
   border-radius: 10px;
 }
 
+/* Varannan artikel får en ljusare bakgrundsfärg för att skilja dem åt */
 article:nth-child(even) {
   background-color: #eee;
 }
 
+/* Gör rubrikerna i artiklarna med små bokstäver */
 article h3 {
   font-variant: small-caps;
 }
 
+/* Gör texten i pre-formaterade block mindre och med horisontell scroll vid behov */
 pre {
   overflow-x: auto;
   white-space: pre-wrap;
   font-size: 14px;
 }
 
+/* Gör så att label lägger sig snyggt */
 label {
   display: block;
   margin: 20px 0;
 }
 
+/* Markerar med färg vart du befinner dig */
 .current {
-  /* Markerar med färg vart du befinner dig */
   background-color: #F1BEBE;
 }
 
+/* Viken färg som används när man går med musen över länken */
 #nav a:hover {
-  /* Viken färg som används när man går med musen över länken */
   background-color: #AEAEAE;
 }
 
+/* Centrerar loggan på alla sidor */
 #logo {
-  /* Centrerar loggan på alla sidor */
   text-align: center;
 }
 
-address {
-  /* Text/address på kontakt */
-  font-family: Georgia, serif;
-  text-align: center;
-}
-
-iframe {
-  /* Centrerar Kartan på kontakt */
-  display: block;
-  margin: 0 auto;
-  border-style: none;
-}
-
+/* Ärndrar länkarna som befinner sig i footern */
 .links {
-  /* Ärndrar länkarna som befinner sig i footern */
   background-color: #F1BEBE;
   color: #373434;
   padding: 1em 5em;
@@ -154,22 +150,210 @@ iframe {
   text-transform: uppercase;
 }
 
+/* Markerar med färg när man går med muspekaren över länken */
 a:hover {
-  /* Markerar med färg när man går med muspekaren över länken */
   background-color: #F6F5E8;
 }
 
+/* Ändrar färg på länkarna */
 a:link {
-  /* Ändrar färg på länkarna */
   color: #4d001f;
 }
 
+/* Ändrar färg på länkarna i footern */
 a:visited {
-  /* Ändrar färg på länkarna i footern */
-  color: #4d001f;
+  color: #8EB3C9;
 }
 
+/* Gör att musen ändrar form vid kontakt med länk */
 a {
-  /* Gör att musen ändrar form vid kontakt med länk */
   cursor: pointer;
+}
+
+/* Stilar för PowerPoint metadata sektionen */
+.btnShowAllPowerPointMetadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btnShowAllPowerPointMetadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btnShowAllPowerPointMetadata.active {
+  background-color: #57779E;
+}
+
+/* Tabell för metadata */
+.metaTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Stilar för tabellceller */
+.metaTable th,
+.metaTable td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Bakgrundsfärg för tabellhuvud */
+.metaTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Ny fast storlek för både textfält och dropdown */
+input[name="powerPointSearch"],
+select[name="powerPointSearchField"] {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  margin: 6px 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  /* fast bredd */
+  width: 660px;
+  /* samma som din "stora" variant */
+  max-width: 100%;
+  /* så att den inte spräcker layout på små skärmar */
+  box-sizing: border-box;
+}
+
+/* Fokusstil för både textfält och dropdown */
+input[name="powerPointSearch"]:focus,
+select[name="powerPointSearchField"]:focus {
+  border-color: #2f5703;
+  box-shadow: 0 0 5px rgba(47, 87, 3, 0.3);
+}
+
+/* Dropdownen får samma stil */
+select[name="powerPointSearchField"] {
+  background-color: #fff;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'><path fill='%232f5703' d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+}
+
+/* Låter label lägga sig snyggt */
+label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Flexbehållare runt select + input */
+.search-controls {
+  display: flex;
+  gap: 4px;
+  /* Lite luft mellan fälten */
+  flex-wrap: wrap;
+  /* Så att de kan bryta rad på små skärmar */
+}
+
+/* Dropdownen smalare */
+.search-controls select[name="powerPointSearchField"] {
+  flex: 0 0 30%;
+  /* Ca 30 % av behållarens bredd */
+  min-width: 120px;
+  /* Aldrig mindre än så */
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'><path fill='%232f5703' d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+/* Inputfältet tar resten */
+.search-controls input[name="powerPointSearch"] {
+  flex: 1;
+  /* Tar all resterande plats */
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Fokusstil */
+.search-controls input:focus,
+.search-controls select:focus {
+  border-color: #2f5703;
+  box-shadow: 0 0 5px rgba(47, 87, 3, 0.3);
+}
+
+/* Se till att tabellen håller sig inom metadata-container */
+.metadata-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  /* Om tabellen blir för bred visas horisontell scroll */
+}
+
+/* Tabell inom metadata-container */
+.metadata-container .metaTable {
+  width: 100%;
+  table-layout: fixed;
+  /* Låser kolumnbredd så tabellen inte expanderar för mycket */
+  word-wrap: break-word;
+  /* Bryter långa ord i cellerna */
+}
+
+/* Stilar för avancerad sökning sektionen */
+#btnAdvancedSearch {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: 1px solid #2f5703;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Hover-effekt för avancerad sökningsknapp */
+#btnAdvancedSearch:hover {
+  background-color: #2f5703;
+  color: #fff;
+}
+
+/* Avancerad sökningsfält container */
+#advancedSearchFields label {
+  display: inline-block;
+  margin-right: 12px;
+  margin-top: 6px;
+}
+
+/* Rad för avancerade sökfält */
+.adv-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
 }
