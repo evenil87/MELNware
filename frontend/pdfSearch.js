@@ -14,6 +14,7 @@ export function pdfSearchPageContent() {
         <input name="pdf-search" type="text" placeholder="Search">
       </label>
 
+
       <p>
         <button class="btn-advanced-search">
           <span class="show">Advanced search</span>
@@ -44,7 +45,16 @@ export function pdfSearchPageContent() {
           </label>
         </div>
       </section>
-
+      <label>
+        Sort by:
+        <select name="pdf-sort">
+          <option value="default">Default</option>
+          <option value="title-asc">Title (A–Z)</option>
+          <option value="title-desc">Title (Z–A)</option>
+          <option value="date-asc">Date (oldest first)</option>
+          <option value="date-desc">Date (newest first)</option>
+        </select>
+      </label>
       <section class="pdf-search-result"></section>
     `;
 }
@@ -62,6 +72,9 @@ document.body.addEventListener('change', event => {
     pdfSearch();
   }
   if (event.target.matches('input[name="pdf-minPages"], input[name="pdf-maxPages"], input[name="pdf-fromDate"], input[name="pdf-toDate"]')) {
+    pdfSearch();
+  }
+  if (event.target.matches('select[name="pdf-sort"]')) {
     pdfSearch();
   }
 });
@@ -165,7 +178,11 @@ async function pdfSearch() {
   let fieldSelect = document.querySelector('select[name="pdf-meta-field"]');
   let field = fieldSelect.value || 'all';
 
-  let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
+  let sortSelect = document.querySelector('select[name="pdf-sort"]');
+  let sort = sortSelect.value || 'default';
+
+  // 🔹 skicka med sort i URL:en
+  let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}&sort=${sort}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
 
