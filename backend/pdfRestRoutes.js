@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 export default function setupPdfRestRoutes(app, db) {
-  // search route
+  // få sökvägen
   app.get('/api/pdf-search/:field/:searchValue', async (req, res) => {
     try {
       const { field, searchValue } = req.params;
@@ -12,7 +12,8 @@ export default function setupPdfRestRoutes(app, db) {
         return res.status(400).json({ error: 'Invalid field name!' });
       }
 
-      // CreationDate is currently in D:YYYYMMDD so we transform the dates
+      // CreationDate är just nu i D:YYYYMMDD så vi ändrar till ett mer lättläst format
+      // så att vi kan söka datumintervall
       let dateFilter = '';
       let params = [];
       if (from && to) {
@@ -31,7 +32,7 @@ export default function setupPdfRestRoutes(app, db) {
         params.push(maxPages);
       }
 
-      // search both title and author ('all')
+      // Sök 'all' (titel och författare)
       if (field === 'all') {
         const like = '%' + searchValue + '%';
         const [result] = await db.execute(
@@ -59,7 +60,7 @@ export default function setupPdfRestRoutes(app, db) {
         return res.json(result);
       }
 
-      // search pages and dates
+      // Sök efter sidantal och datumintervall
       const queryPath =
         field === 'numpages'
           ? "metaPdf->>'$.numpages'"
@@ -96,7 +97,7 @@ export default function setupPdfRestRoutes(app, db) {
     }
   });
 
-  // metadata route
+  // Metadata route
   app.get('/api/pdf-all-meta/:id', async (req, res) => {
     try {
       const { id } = req.params;
@@ -108,7 +109,7 @@ export default function setupPdfRestRoutes(app, db) {
     }
   });
 
-  // download file
+  // Ladda ner filen
   const PDF_DIR = path.resolve('frontend/pdfs');
 
   function safeJoinPdf(fileName) {
@@ -121,7 +122,7 @@ export default function setupPdfRestRoutes(app, db) {
     try {
       const { id } = req.params;
 
-      // get file name for given id
+      // Få filnamn för givet id
       const [rows] = await db.execute(
         `SELECT metaPdf->>'$.file' AS fileName FROM pdf WHERE id = ?`,
         [id]

@@ -1,4 +1,4 @@
-// A function to create the pdf search page content
+// En funktion för att skapa pdf search-sidoinnehåll
 export function pdfSearchPageContent() {
   return `
 <h1>Search PDF</h1>
@@ -49,14 +49,14 @@ export function pdfSearchPageContent() {
     `;
 }
 
-// Listen to key up events in the pdf-search input field
+// Lyssna efter key ups i pdf-search inputfältet
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="pdf-search"]');
   if (!inputField) return;
   pdfSearch();
 });
 
-// Listen to changes in the dropdowns and filters
+// Lyssna efter ändringar i dropdowns och filters
 document.body.addEventListener('change', event => {
   if (event.target.matches('select[name="pdf-meta-field"]')) {
     pdfSearch();
@@ -66,52 +66,51 @@ document.body.addEventListener('change', event => {
   }
 });
 
-// Event handler for advanced search section
+// Eventlyssnare för advanced search-sektionen
 document.body.addEventListener('click', event => {
   let button = event.target.closest('.btn-advanced-search');
   if (!button) return;
   let section = document.querySelector('.advanced-search');
   if (!section) return;
   if (button.classList.contains('already-shown')) {
-    // Hide advanced search section
+    // Göm advanced search-sektionen
     button.classList.remove('already-shown');
     section.style.display = 'none';
   } else {
-    // Show advanced search section
+    // Visa advanced search-sektion
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
 
-// event handler to show all metadata for a pdf file on click
-// on the button btn-show-all-pdf-metadata
+// Eventlyssnare för knappen "show all metadata"
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-pdf-metadata');
   if (!button) { return; }
-  // if the metadata is already shown
+  // om metadatan redan syns
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
     let pre = button.nextElementSibling;
     pre.remove();
     return;
   }
-  // if we have clicked a  btn-show-all-pdf-metadata
+  // Om vi har klickat på metadata-knappen
   let id = button.getAttribute('data-id');
-  // fetch detailed metadata
+  // Fetch detaljerad metadata
   let rawResponse = await fetch('/api/pdf-all-meta/' + id);
   let result = await rawResponse.json();
-  // create a pre element
+  // Skapa ett pre element
   let pre = document.createElement('pre');
   pre.innerHTML = JSON.stringify(result, null, '  ');
-  // add the newly created pre element after the button
+  // Lägg till ett pre element efter metadata-knappen
   button.after(pre);
-  // add a class signaling that the metadata is shown
+  // Lägg till en klass som visar att metadatan redan syns
   button.classList.add('already-shown');
 });
 
-// Pdf search (called on key up in search field and on changes to the select/dropdown)
+// Pdf-sökning (söker vid key ups i sölfältet och ändringar i dropdown
 async function pdfSearch() {
-  // Get search values from chosen input field
+  // Få sökresultat från valt input-fält
   let inputField = document.querySelector('input[name="pdf-search"]');
   let query = inputField.value.trim();
 
@@ -124,15 +123,15 @@ async function pdfSearch() {
   let fieldSelect = document.querySelector('select[name="pdf-meta-field"]');
   let field = fieldSelect.value || 'all';
 
-  // Build the URL with query parameters
+  // Bygg URL:en med query-parametrar
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
 
-  // Get results
+  // Få resultaten och visa
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();
-
+  
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
     of result) {
