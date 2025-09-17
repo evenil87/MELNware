@@ -1,5 +1,3 @@
-// Get express so that we can create a web server.
-import express from 'express';
 // Import the git-ignored db credentials.
 import dbCreds from './db-credentials.js';
 // Get the database driver.
