@@ -1,23 +1,36 @@
+// Javascript för frontend
+// Hanterar meny och sidinnehåll
 import { startPageContent } from './startPage.js';
+import { musicSearchPageContent } from './musicSearch.js';
+import { powerPointSearchPageContent } from './powerPointSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
 
-// Click on menu link
+// Hantera menyval i headern och visa rätt innehåll i main
+// Lyssna på klick i hela bodyn
 document.body.addEventListener('click', event => {
   let navLink = event.target.closest('header nav a');
   if (!navLink) { return; }
-  // don't try to follow the link in the a tag
   event.preventDefault();
-  // read the text in the link
+  // Läs texten i länken
   let linkText = navLink.textContent;
-  // show correct content depending on menu choice
+  // Visa rätt innehåll i main
   showContent(linkText);
+  // console.log('linkText:', linkText);
+
 });
 
-// Function to show page content
+
+// Funktion för att visa innehåll i main baserat på menyval
 function showContent(label) {
   let content;
   if (label === 'Start') {
     content = startPageContent();
+  }
+  else if (label === 'Search music') {
+    content = musicSearchPageContent();
+  }
+  else if (label === 'Search powerpoints') {
+    content = powerPointSearchPageContent();
   }
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();
@@ -25,5 +38,5 @@ function showContent(label) {
   document.querySelector('main').innerHTML = content;
 }
 
-// When the page loads
+// Visa startsidan vid laddning
 showContent('Start');
