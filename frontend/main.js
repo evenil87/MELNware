@@ -1,4 +1,5 @@
-import { startPageContent } from './start-page.js';
+console.log("main is loaded");
+import { startPageContent } from './startPage.js';
 import { imageSearchPageContent } from './photoSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
 
@@ -21,7 +22,7 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Search') {
+  else if (label === 'Search photo') {
     content = imageSearchPageContent();
   }
   else if (label === 'Search PDF') {

@@ -7,7 +7,7 @@ import express from 'express';
 
 // Import rest routes from backend folder.
 // import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
-// import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
+import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 // import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 import setupimageRestRoutes from './backend/imageRestRoutes.js';
 
@@ -19,7 +19,7 @@ const app = express();
 
 // Add rest routes for music search.
 // setupPowerPointRestRoutes(app, db);
-// setupPdfRestRoutes(app, db);
+setupPdfRestRoutes(app, db);
 // setupMusicRestRoutes(app, db);
 setupimageRestRoutes(app, db);
 
