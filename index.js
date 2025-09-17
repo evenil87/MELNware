@@ -21,7 +21,7 @@ const app = express();
 setupPowerPointRestRoutes(app, db);
 setupPdfRestRoutes(app, db);
 setupMusicRestRoutes(app, db);
-// setupimageRestRoutes(app, db);
+setupimageRestRoutes(app, db);
 
 
 // Let Express serve all the content from frontend folder

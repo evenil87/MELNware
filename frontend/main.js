@@ -5,7 +5,7 @@ import { musicSearchPageContent, bindMusicSearchEvents } from './musicSearch.js'
 
 // Handle menu clicks
 document.body.addEventListener('click', event => {
-  const navLink = event.target.closest('a[data-page]');
+  const navLink = event.target.closest('header nav a');
   if (!navLink) return;
   event.preventDefault();
   // read the text in the link
@@ -16,10 +16,16 @@ document.body.addEventListener('click', event => {
 });
 
 // Show page content
-function showContent(page) {
-  let content = '';
-  if (page === 'start') {
+function showContent(label) {
+  let content;
+  if (label === 'Start') {
     content = startPageContent();
+  }
+  else if (label === 'Search PDF') {
+    content = pdfSearchPageContent();
+  }
+  else if (label === 'Search photo') {
+    content = imageSearchPageContent();
   }
   else if (label === 'Search music') {
     content = musicSearchPageContent();
@@ -28,7 +34,7 @@ function showContent(page) {
   document.querySelector('main').innerHTML = content;
 
   // Delegate event binding to the page module
-  if (page === 'music-search') {
+  if (label === 'Search music') {
     bindMusicSearchEvents();
   }
 }
