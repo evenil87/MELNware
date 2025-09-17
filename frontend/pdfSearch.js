@@ -1,4 +1,4 @@
-// Funktion som returnerar pdf-search som HTML
+// Funktion som returnerar pdf-search som HTML 
 export function pdfSearchPageContent() {
   return `
 <h1>Search PDF</h1>
@@ -58,11 +58,9 @@ document.body.addEventListener('keyup', event => {
 
 // Lyssna på ändringar i dropdowns och filters
 document.body.addEventListener('change', event => {
-  // Ifall användaren byter sökfält (all, title, author)
   if (event.target.matches('select[name="pdf-meta-field"]')) {
     pdfSearch();
   }
-  // Ifall användaren ändrar filter (sidantal, datum)
   if (event.target.matches('input[name="pdf-minPages"], input[name="pdf-maxPages"], input[name="pdf-fromDate"], input[name="pdf-toDate"]')) {
     pdfSearch();
   }
@@ -74,52 +72,90 @@ document.body.addEventListener('click', event => {
   if (!button) return;
   let section = document.querySelector('.advanced-search');
   if (!section) return;
-  // Kolla om advanced search-sektionen redan visas
   if (button.classList.contains('already-shown')) {
-    // Dölj advanved search-knappen om sektionen visas
     button.classList.remove('already-shown');
     section.style.display = 'none';
   } else {
-    // Visa advanced search-knappen om sektionen är dold
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
 
-// Lyssnar på klick på knappen "show all metadata" i sökresultaten
+// Funktion som bygger metadatans tabellrader
+// obj = objektet vi går igenom
+// tbody = tabellens <tbody> där vi lägger till rader
+// prefix = visar var nyckeln ligger om den ligger djupt i objektet
+function buildMetadataTableRows(obj, tbody, prefix = '') {
+  // Gå igenom alla nycklar i objektet
+  for (let key in obj) {
+    let value = obj[key]; // Hämta nyckelns värde
+    // Lägg ihop nyckeln med prefix om vi är nere i ett inre objekt
+    // t.ex 'metadata._metadata.dc:title'
+    let fullKey = prefix ? `${prefix}.${key}` : key;
+    // Om värdet är ett objekt och inte null
+    if (typeof value === 'object' && value !== null) {
+      // Gå djupare ner i objektet, funktionen kallar på sig själv
+      buildMetadataTableRows(value, tbody, fullKey);
+    } else {
+      // Bygg tabellrad om värdet är enkelt
+      let tr = document.createElement('tr');
+
+      let tdKey = document.createElement('td');
+      tdKey.textContent = fullKey; // Nyckeln t.ex 'pdf:creator'
+
+      let tdVal = document.createElement('td');
+      tdVal.textContent = value; // Själva värdet t.ex 'Adobe Acrobat'
+
+      // Lägg ihop nyckeln och värdet i raden
+      tr.appendChild(tdKey);
+      tr.appendChild(tdVal);
+      // Lägg till raden i tabellen
+      tbody.appendChild(tr);
+    }
+  }
+}
+
+// Lyssnar på klick på knappen 'show all metadata' i sökresultaten
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-pdf-metadata');
   if (!button) { return; }
-  // Dölj knappen om metadatan redan visas
+
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    let pre = button.nextElementSibling;
-    pre.remove();
+    let container = button.nextElementSibling;
+    container.remove();
+    button.textContent = 'Show metadata';
     return;
   }
 
-  // Hämta detaljerad metadata om vi har klickat på show metadata-knappen
   let id = button.getAttribute('data-id');
   let rawResponse = await fetch('/api/pdf-all-meta/' + id);
   let result = await rawResponse.json();
 
-  // Skapa ett pre element för att visa metadata som JSON
-  let pre = document.createElement('pre');
-  pre.innerHTML = JSON.stringify(result, null, '  ');
+  let container = document.createElement('div');
+  container.className = 'metadata-container';
 
-  // Lägg till ett pre element efter metadata-knappen
-  button.after(pre);
+  let table = document.createElement('table');
+  table.className = 'metaTable';
+  let tbody = document.createElement('tbody');
 
-  // Lägg till en klass som visar att metadatan redan visas
+  // Bygg tabellrader för hela metaPdf rekursivt
+  buildMetadataTableRows(result.metaPdf, tbody);
+
+  table.appendChild(tbody);
+  container.appendChild(table);
+
+  button.after(container);
+
   button.classList.add('already-shown');
+  button.textContent = 'Hide metadata';
 });
 
 // Funktion som gör själva sökningen mot API:et
 async function pdfSearch() {
-  // Läs in värdet från sökfältet
   let inputField = document.querySelector('input[name="pdf-search"]');
   let query = inputField.value.trim();
-  // Läs in filtervärden
+
   let fromDate = document.querySelector('input[name="pdf-fromDate"]').value;
   let toDate = document.querySelector('input[name="pdf-toDate"]').value;
 
@@ -129,24 +165,19 @@ async function pdfSearch() {
   let fieldSelect = document.querySelector('select[name="pdf-meta-field"]');
   let field = fieldSelect.value || 'all';
 
-  // Bygg upp URL:en med query-parametrar
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}`;
   if (minPages) url += `&minPages=${minPages}`;
   if (maxPages) url += `&maxPages=${maxPages}`;
 
-  // Hämta resultaten från servern
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();
-  
-  // Bygg HTML för sökresultaten
+
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
     of result) {
-    // Formatera datum
     let YYMMDD = year && month && day ? `${year}-${month}-${day}` : 'Unknown';
     let modYYMMDD = modYear && modMonth && modDay ? `${modYear}-${modMonth}-${modDay}` : 'Unknown';
-    
-    // Lägg till HTML för varje sökträff
+
     resultAsHtml += `
       <article>
         <h2>${title || 'Unknown'}</h2>
@@ -164,6 +195,5 @@ async function pdfSearch() {
     `;
   }
 
-  // Visa resultaten på sidan
   document.querySelector('.pdf-search-result').innerHTML = resultAsHtml;
 }
