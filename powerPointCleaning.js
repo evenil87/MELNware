@@ -1,16 +1,22 @@
-// Import the file system module (fs)
+// Importerar nödvändiga moduler
 import fs from 'fs';
 
-// Read JSON from file.
-let json = fs.readFileSync('./frontend/powerPoint/powerPointJsonFromCsv.json', 'utf-8');
-let data = JSON.parse(json);
+// Läs JSON från fil med felhantering
+let data;
+try {
+  const json = fs.readFileSync('./frontend/powerPoint/csvjson.json', 'utf-8');
+  data = JSON.parse(json);
+} catch (err) {
+  console.error('Could not read of PARSE the file:', err);
+  process.exit(1);
+}
 
-// Converts snake_case to camelCase.
+// Omvandlar snake_case till camelCase
 function toCamelCase(str) {
   return str.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
 }
 
-// Converts keys recursively.
+// Konverterar alla keys i ett objekt (och dess barn) till camelCase
 function convertKeysToCamelCase(obj) {
   if (Array.isArray(obj)) {
     return obj.map(item => convertKeysToCamelCase(item));
@@ -24,47 +30,56 @@ function convertKeysToCamelCase(obj) {
   return obj;
 }
 
-// Tidy up dates (removes T, Z and seconds).
+// Rensar datum: tar bort T, Z och sekunder om de finns
 function cleanDate(dateStr) {
-  if (typeof dateStr === "string" && dateStr.includes("T")) {
-    let cleaned = dateStr.replace("T", " ").replace("Z", "");
-    return cleaned.slice(0, 16); // yyyy-mm-dd hh:mm
+  if (typeof dateStr !== 'string') return dateStr;
+
+  try {
+    const date = new Date(dateStr);
+    if (!isNaN(date)) {
+      // yyyy-mm-dd hh:mm
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      const hh = String(date.getHours()).padStart(2, '0');
+      const min = String(date.getMinutes()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+    }
+  } catch (e) {
+    // fallback till originalsträng om parsing misslyckas
   }
-  return dateStr;
+  return dateStr.replace("T", " ").replace("Z", "").slice(0, 16);
 }
 
-// Process all objects in JSON.
-let cleanedData = data.map(powerpointMetadata => {
-  // Extract filename.
-  let fileName = powerpointMetadata.digest + '.ppt';
+// Bearbeta alla objekt i JSON
+const cleanedData = data.map(item => {
+  // Filnamn
+  const fileName = item.digest ? `${item.digest}.ppt` : 'unknown.ppt';
 
-  // Remove unnecessary fields.
-  delete powerpointMetadata.digest;
-  delete powerpointMetadata.sha256;
-  delete powerpointMetadata.sha512;
-  delete powerpointMetadata.timestamp;
-  delete powerpointMetadata.urlkey;
-  delete powerpointMetadata.revision;
+  // Ta bort onödiga fält
+  const fieldsToDelete = ['sha256', 'sha512', 'timestamp', 'urlkey', 'revision'];
+  fieldsToDelete.forEach(f => delete item[f]);
 
-  // Converts keys to camelCase. 
-  let converted = convertKeysToCamelCase(powerpointMetadata);
+  // Konvertera keys till camelCase
+  const converted = convertKeysToCamelCase(item);
 
-  // Fix dates (creationDate and lastModified).
-  if (converted.creationDate) {
-    converted.creationDate = cleanDate(converted.creationDate);
-  }
-  if (converted.lastModified) {
-    converted.lastModified = cleanDate(converted.lastModified);
-  }
+  // Rensa datum
+  if (converted.creationDate) converted.creationDate = cleanDate(converted.creationDate);
+  if (converted.lastModified) converted.lastModified = cleanDate(converted.lastModified);
 
-  console.log('');
-  console.log(fileName);
-  console.log(converted);
+  console.log('\n', fileName, converted);
 
   return { fileName, ...converted };
 });
 
-// Save as new JSON file.
-fs.writeFileSync('./frontend/powerPoint/powerPointJsonCleaned.json', JSON.stringify(cleanedData, null, 2), 'utf-8');
-
-console.log('Ny fil sparad som powerPointJsonCleaned.json');
+// Spara som ny JSON-fil
+try {
+  fs.writeFileSync(
+    './frontend/powerPoint/powerPointJsonCleaned.json',
+    JSON.stringify(cleanedData, null, 2),
+    'utf-8'
+  );
+  console.log('New file saved as powerPointJsonCleaned.json');
+} catch (err) {
+  console.error('Could not save the file:', err);
+}

@@ -13,11 +13,14 @@
 body {
   margin: 0;
   font-size: 18px;
-  background-color: #CD948B; /* ljusbrun bakgrund */
-  font-family: 'Crimson Text'; /* huvudfont */
+  background-color: #CD948B;
+  /* ljusbrun bakgrund */
+  font-family: 'Crimson Text';
+  /* huvudfont */
   display: flex;
   min-height: 100vh;
-  flex-direction: column; /* vertikal layout */
+  flex-direction: column;
+  /* vertikal layout */
 }
 
 /* --- Header --- */
@@ -69,6 +72,18 @@ footer {
   padding: 20px;
   text-align: center;
   font-family: 'Roboto';
+}
+
+
+/* Sticky footer fix */
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 /* --- Rubriker --- */
@@ -124,190 +139,419 @@ pre {
 label {
   display: block;
   margin: 20px 0;
-}
-    
-    /* avstånd ovan och under */
-    
-  
-    /* --- Music Player Styles --- */
-    /* Play-knapp */
-    .btn-play.pastel {
-      display: inline-block;
-      /* säkerställer vänsterjustering */
-      margin: 4px 0;
-      /* mellanrum ovan och under */
-      font-size: 1rem;
-      padding: 8px 18px;
-      border-radius: 9999px;
-      /* rund knapp */
-      border: none;
-      background: linear-gradient(135deg, #f9a8d4, #a5f3fc, #c7d2fe);
-      /* pastel-gradient */
-      background-size: 200% 200%;
-      /* för animation */
-      color: #1e293b;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-      transition: background-position 0.3s ease, transform 0.2s ease;
-      text-align: left;
-    }
-  
-    /* Hover-effekt för play-knapp */
-    .btn-play.pastel:hover {
-      background-position: 100% 0;
-      transform: translateY(-2px);
-      /* lyfter knappen lite */
-    }
-  
-    /* Waveform canvas */
-    canvas.waveform {
-      display: block;
-      width: 100%;
-      height: 70px;
-      margin-top: 4px;
-      /* liten mellanrum under knapp */
-      border-radius: 8px;
-    }
-  
-    /* Music player container */
-    .music-player {
-      display: flex;
-      flex-direction: column;
-      /* stapla element vertikalt */
-      gap: 4px;
-      /* mellanrum mellan element */
-      align-items: flex-start;
-      /* vänsterjustera play-knappen */
-    }
-  
-    /* --- Neon-pastell volymkontroll --- */
-    .neon-volume {
-      width: 150px;
-      height: 10px;
-      border-radius: 5px;
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-      background: linear-gradient(90deg, #f9a8d4 0%, #a5f3fc 50%, #c7d2fe 100%);
-      /* initial pastellgradient */
-      transition: background 0.2s ease;
-    }
-  
-    /* Slider-thumb (knopp) */
-    .neon-volume::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #fff;
-      border: 2px solid #1e293b;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-    }
-  
-    /* Hover-effekt för thumb */
-    .neon-volume::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
-    }
-  
-    /* Firefox-stöd */
-    .neon-volume::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #fff;
-      border: 2px solid #1e293b;
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
-    }
-  
-    /* Neon-effekt uppdateras via JS beroende på volymvärde */
+}/* avstånd ovan och under */
 
-        .btn-show-all-image-metadata.already-shown {
-          .show {
-            display: none;
-          }
-        }
-    
-        .btn-show-all-image-metadata:not(.already-shown) {
-          .hide {
-            display: none;
-          }
-        }
-    
-        img {
-          max-width: 100%;
-          height: auto;
-          display: block;
-          margin-bottom: 10px;
-        }
-    
-        .metaTable {
-          border-collapse: collapse;
-          width: 100%;
-          margin-top: 10px;
-          font-size: 14px;
-        }
-    
-        .metaTable th,
-        .metaTable td {
-          border: 1px solid #ccc;
-          padding: 6px 10px;
-          text-align: left;
-          vertical-align: top;
-        }
-    
-        .metaTable th {
-          background-color: #f2f2f2;
-          font-weight: bold;
-        }
-    
-        label:not(.checkbox-label) {
-          display: block;
-          margin: 20px 0;
-        }
-    
-        .btn-show-all-pdf-metadata.already-shown {
-          .show {
-            display: none;
-          }
-        }
-    
-        .btn-show-all-pdf-metadata:not(.already-shown) {
-          .hide {
-            display: none;
-          }
-        }
-    
-        .btn-advanced-search.already-shown .show {
-          display: none;
-        }
-    
-        .btn-advanced-search:not(.already-shown) .hide {
-          display: none;
-        }
-    
-        .metaTable {
-          border-collapse: collapse;
-          width: 100%;
-          margin-top: 10px;
-          font-size: 14px;
-        }
-    
-        .metaTable th,
-        .metaTable td {
-          border: 1px solid #ccc;
-          padding: 6px 10px;
-          text-align: left;
-          vertical-align: top;
-        }
-    
-        .metaTable th {
-          background-color: #f2f2f2;
-          font-weight: bold;
-        }
+
+/* --- Music Player Styles --- */
+/* Play-knapp */
+.btn-play.pastel {
+  display: inline-block;
+  /* säkerställer vänsterjustering */
+  margin: 4px 0;
+  /* mellanrum ovan och under */
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  /* rund knapp */
+  border: none;
+  background: linear-gradient(135deg, #f9a8d4, #a5f3fc, #c7d2fe);
+  /* pastel-gradient */
+  background-size: 200% 200%;
+  /* för animation */
+  color: #1e293b;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: background-position 0.3s ease, transform 0.2s ease;
+  text-align: left;
+}
+
+/* Hover-effekt för play-knapp */
+.btn-play.pastel:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  /* lyfter knappen lite */
+}
+
+/* Waveform canvas */
+canvas.waveform {
+  display: block;
+  width: 100%;
+  height: 70px;
+  margin-top: 4px;
+  /* liten mellanrum under knapp */
+  border-radius: 8px;
+}
+
+/* Music player container */
+.music-player {
+  display: flex;
+  flex-direction: column;
+  /* stapla element vertikalt */
+  gap: 4px;
+  /* mellanrum mellan element */
+  align-items: flex-start;
+  /* vänsterjustera play-knappen */
+}
+
+/* --- Neon-pastell volymkontroll --- */
+.neon-volume {
+  width: 150px;
+  height: 10px;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #f9a8d4 0%, #a5f3fc 50%, #c7d2fe 100%);
+  /* initial pastellgradient */
+  transition: background 0.2s ease;
+}
+
+/* Slider-thumb (knopp) */
+.neon-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #1e293b;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover-effekt för thumb */
+.neon-volume::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+}
+
+/* Firefox-stöd */
+.neon-volume::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #1e293b;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Neon-effekt uppdateras via JS beroende på volymvärde */
+
+.btn-show-all-image-metadata.already-shown {
+  .show {
+    display: none;
+  }
+}
+
+.btn-show-all-image-metadata:not(.already-shown) {
+  .hide {
+    display: none;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.metaTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.metaTable th,
+.metaTable td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.metaTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+label:not(.checkbox-label) {
+  display: block;
+  margin: 20px 0;
+}
+
+.btn-show-all-pdf-metadata.already-shown {
+  .show {
+    display: none;
+  }
+}
+
+.btn-show-all-pdf-metadata:not(.already-shown) {
+  .hide {
+    display: none;
+  }
+}
+
+.btn-advanced-search.already-shown .show {
+  display: none;
+}
+
+.btn-advanced-search:not(.already-shown) .hide {
+  display: none;
+}
+
+.metaTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.metaTable th,
+.metaTable td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.metaTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+/* Markerar med färg vart du befinner dig */
+.current {
+  background-color: #F1BEBE;
+}
+
+/* Viken färg som används när man går med musen över länken */
+#nav a:hover {
+  background-color: #AEAEAE;
+}
+
+/* Centrerar loggan på alla sidor */
+#logo {
+  text-align: center;
+}
+
+/* Ärndrar länkarna som befinner sig i footern */
+.links {
+  background-color: #F1BEBE;
+  color: #373434;
+  padding: 1em 5em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* Markerar med färg när man går med muspekaren över länken */
+a:hover {
+  background-color: #F6F5E8;
+}
+
+/* Ändrar färg på länkarna */
+a:link {
+  color: #4d001f;
+}
+
+/* Ändrar färg på länkarna i footern */
+a:visited {
+  color: #8EB3C9;
+}
+
+/* Gör att musen ändrar form vid kontakt med länk */
+a {
+  cursor: pointer;
+}
+
+/* Stilar för PowerPoint metadata sektionen */
+.btnShowAllPowerPointMetadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btnShowAllPowerPointMetadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btnShowAllPowerPointMetadata.active {
+  background-color: #57779E;
+}
+
+/* Tabell för metadata */
+.metaTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Stilar för tabellceller */
+.metaTable th,
+.metaTable td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Bakgrundsfärg för tabellhuvud */
+.metaTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Ny fast storlek för både textfält och dropdown */
+input[name="powerPointSearch"],
+select[name="powerPointSearchField"] {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  margin: 6px 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  /* fast bredd */
+  width: 660px;
+  /* samma som din "stora" variant */
+  max-width: 100%;
+  /* så att den inte spräcker layout på små skärmar */
+  box-sizing: border-box;
+}
+
+/* Fokusstil för både textfält och dropdown */
+input[name="powerPointSearch"]:focus,
+select[name="powerPointSearchField"]:focus {
+  border-color: #2f5703;
+  box-shadow: 0 0 5px rgba(47, 87, 3, 0.3);
+}
+
+/* Dropdownen får samma stil */
+select[name="powerPointSearchField"] {
+  background-color: #fff;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'><path fill='%232f5703' d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+}
+
+/* Låter label lägga sig snyggt */
+label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Flexbehållare runt select + input */
+.search-controls {
+  display: flex;
+  gap: 4px;
+  /* Lite luft mellan fälten */
+  flex-wrap: wrap;
+  /* Så att de kan bryta rad på små skärmar */
+}
+
+/* Dropdownen smalare */
+.search-controls select[name="powerPointSearchField"] {
+  flex: 0 0 30%;
+  /* Ca 30 % av behållarens bredd */
+  min-width: 120px;
+  /* Aldrig mindre än så */
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'><path fill='%232f5703' d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+/* Inputfältet tar resten */
+.search-controls input[name="powerPointSearch"] {
+  flex: 1;
+  /* Tar all resterande plats */
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* Fokusstil */
+.search-controls input:focus,
+.search-controls select:focus {
+  border-color: #2f5703;
+  box-shadow: 0 0 5px rgba(47, 87, 3, 0.3);
+}
+
+/* Se till att tabellen håller sig inom metadata-container */
+.metadata-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  /* Om tabellen blir för bred visas horisontell scroll */
+}
+
+/* Tabell inom metadata-container */
+.metadata-container .metaTable {
+  width: 100%;
+  table-layout: fixed;
+  /* Låser kolumnbredd så tabellen inte expanderar för mycket */
+  word-wrap: break-word;
+  /* Bryter långa ord i cellerna */
+}
+
+/* Stilar för avancerad sökning sektionen */
+#btnAdvancedSearch {
+  margin-top: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: 1px solid #2f5703;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Hover-effekt för avancerad sökningsknapp */
+#btnAdvancedSearch:hover {
+  background-color: #2f5703;
+  color: #fff;
+}
+
+/* Avancerad sökningsfält container */
+#advancedSearchFields label {
+  display: inline-block;
+  margin-right: 12px;
+  margin-top: 6px;
+}
+
+/* Rad för avancerade sökfält */
+.adv-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}

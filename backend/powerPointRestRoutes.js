@@ -1,67 +1,63 @@
-// Register Rest routes for powerpoint search.
+// backend/powerPointRestRoutes.js
 export default function setupPowerPointRestRoutes(app, db) {
-  // Search powerpoint by title, company, slidecount or creationDate.
-  app.get('/api/powerPoint-search/:field/:searchValue', async (req, res) => {
-    // Extract field and searchValue from the request parameters.
+  app.get('/api/powerPointSearch/:field/:searchValue', async (req, res) => {
     const { field, searchValue } = req.params;
 
-    // Collection of valid fields and their corresponding JSON paths.
+    // Validera fältet som söks på
     const validFields = {
       title: '$.title',
       company: '$.company',
       slides: '$.slideCount',
-      date: '$.creationDate'
+      creationDate: '$.creationDate'
     };
 
-    // Check if the provided field is valid.
-    // Stop processing and return an error if the field is not valid.
+    // Om fältet inte är giltigt, skicka felmeddelande
     if (!validFields[field]) {
-      res.json({ error: 'Invalid field name!' });
+      res.status(400).json({ error: 'Invalid field name!' });
       return;
     }
 
-    // SQL query to search powerpoint metadata based on the specified field and search value.
+    const path = validFields[field];
+
+    // Bygg SQL-frågan baserat på fältet
+    let whereClause;
+    let orderBy;
+    let param;
+
+    // Speciell hantering för creationDate (ingen wildcard i början)
+    if (field === 'creationDate') {
+      whereClause = `metaPowerPoint->>'$.creationDate' LIKE ?`;
+      orderBy = `CAST(metaPowerPoint->>'$.creationDate' AS CHAR) ASC`;
+      param = `${searchValue}%`; // Wildcard i slutet
+    } else {
+      // Hantering för andra fält
+      whereClause = `LOWER(metaPowerPoint->>'${path}') LIKE LOWER(?)`;
+      orderBy = `title ASC`;
+      param = `%${searchValue}%`; // Wildcard båda sidor
+    }
+    // SQL-frågan
     const query = `
-      SELECT 
+      SELECT
         id,
         metaPowerPoint->>'$.title' AS title,
         metaPowerPoint->>'$.company' AS company,
-        metaPowerPoint->>'$.original' AS link,
         metaPowerPoint->>'$.slideCount' AS slides,
-        metaPowerPoint->>'$.creationDate' AS date
+        metaPowerPoint->>'$.creationDate' AS date,
+        metaPowerPoint->>'$.fileSize' AS size,
+        metaPowerPoint->>'$.original' AS URL,
+        metaPowerPoint->>'$.fileName' AS fileName
       FROM powerPoint
-      WHERE LOWER(metaPowerPoint->>'${validFields[field]}') LIKE LOWER(?)
+      WHERE ${whereClause}
+      ORDER BY ${orderBy}
     `;
 
-    // Execute the query with the search value wrapped in wildcards for partial matching.
-    const [result] = await db.execute(query, [`%${searchValue}%`]);
-    // Return the search results as a JSON response.
-    res.json(result);
+    // Kör frågan och skicka resultatet
+    try {
+      const [rows] = await db.execute(query, [param]);
+      res.json(rows);
+    } catch (err) {
+      console.error('DB error:', err);
+      res.status(500).json({ error: 'Database error' });
+    }
   });
-};
-
-
-//  app.get('/api/powerPoint/:id', async (req, res) => {
-//    const { id } = req.params;
-
-//   try {
-//   const [result] = await db.execute(`
-//       SELECT *
-//      FROM powerPoint
-//    WHERE id = ?
-//  `, [id]);
-
-//  if (result.length === 0) {
-//   res.status(404).json({ error: 'PowerPoint not found' });
-//   return;
-//  }
-
-//  res.json(result[0]);
-//    } catch (error) {
-//    console.error('DB error:', error);
-//      res.status(500).json({ error: 'Database error' });
-//    }
-//  });
-
-
-// Title, creationDate, company, original, slideCount, revisionNumber
+}
