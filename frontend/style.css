@@ -580,3 +580,11 @@ label {
 .btnShowAllPdfMetadata.active {
   background-color: #57779E;
 }
+
+.metaTable tr:nth-child(even) {
+  background-color: #edf77c; /* ljusgul */
+}
+
+.metaTable tr:nth-child(odd) {
+  background-color: #e1d4d0; /* ljusrosa */
+}
