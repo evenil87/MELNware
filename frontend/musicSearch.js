@@ -68,14 +68,16 @@ export function musicSearchPageContent() {
         max-width: 600px;
       }
       table.metadata-table td {
-        border: 1px solid #ccc;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.05);
         padding: 6px;
         text-align: left;
       }
       table.metadata-table td.key {
         font-weight: bold;
-        background: #f0f0f0;
+        background: rgba(240,240,240,0.3);
         width: 35%;
+        backdrop-filter: blur(4px);
       }
 
       /* Neon-pastell volymkontroll */
@@ -179,7 +181,7 @@ async function musicSearch() {
           </label>
 
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
-          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show metadata</button></p>
+          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
         </article>
       `;
     });
@@ -190,65 +192,80 @@ async function musicSearch() {
   }
 }
 
-// Rekursiv funktion för metadata-tabell
-function createTableRows(data, parentKey = '') {
-  const rows = [];
-  for (const key in data) {
-    const value = data[key];
-    const fullKey = parentKey ? `${parentKey} → ${key}` : key;
+// Rekursiv funktion för musikmetadata-tabell
+function buildMusicMetadataRows(obj, tbody, prefix = '') {
+  for (let key in obj) {
+    let value = obj[key];
 
-    const tr = document.createElement('tr');
-    const tdKey = document.createElement('td');
-    tdKey.textContent = fullKey;
-    tdKey.classList.add('key');
+    // Hoppa över file
+    if (prefix === 'metaMusic' && key === 'file') continue;
 
-    const tdValue = document.createElement('td');
+    // Om root common eller format, hoppa men gå rekursivt
+    if (prefix === 'metaMusic' && (key === 'common' || key === 'format')) {
+      if (value && typeof value === 'object') {
+        buildMusicMetadataRows(value, tbody, ''); // tom prefix
+      }
+      continue;
+    }
+
+    // Skapa display-nyckel utan metaMusic-prefix
+    let displayKey = prefix ? `${prefix} → ${key}` : key;
+    if (displayKey.startsWith('metaMusic → ')) {
+      displayKey = displayKey.replace('metaMusic → ', '');
+    }
 
     if (value && typeof value === 'object' && !Array.isArray(value)) {
-      tdValue.textContent = '[Object]';
-      tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr, ...createTableRows(value, fullKey));
-    } else if (Array.isArray(value)) {
-      tdValue.textContent = value.join(', ');
-      tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr);
+      buildMusicMetadataRows(value, tbody, displayKey);
     } else {
-      tdValue.textContent = value ?? 'Unknown';
+      const tr = document.createElement('tr');
+
+      const tdKey = document.createElement('td');
+      tdKey.textContent = displayKey;
+      tdKey.classList.add('key');
+
+      const tdVal = document.createElement('td');
+      tdVal.textContent = Array.isArray(value) ? value.join(', ') : value ?? 'Okänt';
+
       tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr);
+      tr.appendChild(tdVal);
+      tbody.appendChild(tr);
     }
   }
-  return rows;
 }
 
 // Visa/dölj metadata
 document.body.addEventListener('click', async event => {
-  let button = event.target.closest('.btn-show-all-music-metadata');
+  const button = event.target.closest('.btn-show-all-music-metadata');
   if (!button) return;
 
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    button.textContent = 'Show metadata';
-    let table = button.nextElementSibling;
-    if (table && table.tagName === 'TABLE') table.remove();
+    const container = button.nextElementSibling;
+    if (container) container.remove();
+    button.textContent = 'Show all metadata';
     return;
   }
 
-  let id = button.getAttribute('data-id');
+  const id = button.getAttribute('data-id');
   try {
-    let rawResponse = await fetch('/api/music-all-meta/' + id);
+    const rawResponse = await fetch('/api/music-all-meta/' + id);
     if (!rawResponse.ok) throw new Error(`HTTP error ${rawResponse.status}`);
-    let result = await rawResponse.json();
+    const result = await rawResponse.json();
 
-    let table = document.createElement('table');
-    table.classList.add('metadata-table');
-    const rows = createTableRows(result);
-    rows.forEach(tr => table.appendChild(tr));
+    const container = document.createElement('div');
+    container.className = 'metadata-container';
 
-    button.after(table);
+    const table = document.createElement('table');
+    table.className = 'metadata-table';
+    const tbody = document.createElement('tbody');
+
+    // Bygg tabellrader rekursivt
+    buildMusicMetadataRows(result, tbody);
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+    button.after(container);
+
     button.classList.add('already-shown');
     button.textContent = 'Hide metadata';
   } catch (err) {
@@ -358,7 +375,6 @@ document.body.addEventListener('input', event => {
   if (!volumeSlider) return;
   if (gainNode) gainNode.gain.value = parseFloat(volumeSlider.value);
 
-  // Intensifiera gradient baserat på volym
   const percent = parseFloat(volumeSlider.value);
   volumeSlider.style.background = `linear-gradient(90deg, rgba(249,168,212,${0.3+percent*0.7}) 0%, rgba(165,243,252,${0.3+percent*0.7}) 50%, rgba(199,210,254,${0.3+percent*0.7}) 100%)`;
 });
