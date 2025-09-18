@@ -37,7 +37,7 @@ export default function setupPdfRestRoutes(app, db) {
 
       let result;
 
-      // Sök både titel, författare och text om field === 'all'
+      // Sök i Title + Author + Text om field === 'all'
       if (field === 'all') {
         const like = '%' + searchValue + '%';
         [result] = await db.execute(
@@ -54,7 +54,7 @@ export default function setupPdfRestRoutes(app, db) {
                  SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
                  metaPdf->>'$.numpages'     AS pages,
-                 SUBSTRING(metaPdf->>'$.text', 1, 200) AS snippet
+                 SUBSTRING(metaPdf->>'$.text', 1, 100) AS snippet
           FROM pdf
           WHERE (
              LOWER(metaPdf->>'$.info.Title')  LIKE LOWER(?)
@@ -67,6 +67,7 @@ export default function setupPdfRestRoutes(app, db) {
           [like, like, like, ...params]
         );
       } else {
+        // Bygg queryPath beroende på vilket fält som valts
         const queryPath =
           field === 'numpages'
             ? "metaPdf->>'$.numpages'"
@@ -90,7 +91,7 @@ export default function setupPdfRestRoutes(app, db) {
                  SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
                  metaPdf->>'$.numpages'     AS pages,
-                 SUBSTRING(metaPdf->>'$.text', 1, 200) AS snippet
+                 SUBSTRING(metaPdf->>'$.text', 1, 100) AS snippet
           FROM pdf
           WHERE LOWER(${queryPath}) LIKE LOWER(?)
           ${dateFilter}

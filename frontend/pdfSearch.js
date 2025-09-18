@@ -8,7 +8,6 @@ export function pdfSearchPageContent() {
           <option value="title">Title</option>
           <option value="author">Author</option>
           <option value="text">Text</option>
-
         </select>
       </label>
 
@@ -16,13 +15,23 @@ export function pdfSearchPageContent() {
         <input name="pdf-search" type="text" placeholder="Search">
       </label>
 
-
-      <p>
+      <div class="search-controls-top">
         <button class="btn-advanced-search">
           <span class="show">Advanced search</span>
           <span class="hide">Hide advanced search</span>
         </button>
-      </p>
+
+        <label>
+          Sort by:
+          <select name="pdf-sort">
+            <option value="default">Default</option>
+            <option value="title-asc">Title (A–Z)</option>
+            <option value="title-desc">Title (Z–A)</option>
+            <option value="date-asc">Date (oldest first)</option>
+            <option value="date-desc">Date (newest first)</option>
+          </select>
+        </label>
+      </div>
 
       <section class="advanced-search" style="display:none; margin-top:10px;">
         <div class="date-pickers">
@@ -47,16 +56,6 @@ export function pdfSearchPageContent() {
           </label>
         </div>
       </section>
-      <label>
-        Sort by:
-        <select name="pdf-sort">
-          <option value="default">Default</option>
-          <option value="title-asc">Title (A–Z)</option>
-          <option value="title-desc">Title (Z–A)</option>
-          <option value="date-asc">Date (oldest first)</option>
-          <option value="date-desc">Date (newest first)</option>
-        </select>
-      </label>
       <section class="pdf-search-result"></section>
     `;
 }
@@ -130,10 +129,10 @@ function buildMetadataTableRows(obj, tbody, prefix = '') {
   }
 }
 
-// Lyssnar på klick på knappen 'show all metadata' i sökresultaten
+// Lyssnar på klick på knappen 'Show metadata' i sökresultaten
 document.body.addEventListener('click', async event => {
-  let button = event.target.closest('.btn-show-all-pdf-metadata');
-  if (!button) { return; }
+  let button = event.target.closest('.btnShowAllPdfMetadata');
+  if (!button) return;
 
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
@@ -143,27 +142,28 @@ document.body.addEventListener('click', async event => {
     return;
   }
 
+  // Annars hämta metadata från API
   let id = button.getAttribute('data-id');
   let rawResponse = await fetch('/api/pdf-all-meta/' + id);
   let result = await rawResponse.json();
 
+  // Bygg en container för tabellen
   let container = document.createElement('div');
   container.className = 'metadata-container';
 
   let table = document.createElement('table');
   table.className = 'metaTable';
   let tbody = document.createElement('tbody');
-
   // Bygg tabellrader för hela metaPdf rekursivt
   buildMetadataTableRows(result.metaPdf, tbody);
-
   table.appendChild(tbody);
   container.appendChild(table);
 
   button.after(container);
 
-  button.classList.add('already-shown');
+  // Knappen 'Hide metadata'
   button.textContent = 'Hide metadata';
+  button.classList.add('already-shown');
 });
 
 // Funktion som gör själva sökningen mot API:et
@@ -182,7 +182,6 @@ async function pdfSearch() {
 
   let sortSelect = document.querySelector('select[name="pdf-sort"]');
   let sort = sortSelect.value || 'default';
-
   // Lägg till sorteringsval i URL:en
   let url = `/api/pdf-search/${field}/${encodeURIComponent(query)}?from=${fromDate}&to=${toDate}&sort=${sort}`;
   if (minPages) url += `&minPages=${minPages}`;
@@ -191,7 +190,6 @@ async function pdfSearch() {
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();
 
-  // Funktion som highlightar sökresultat
   function highlightSnippet(snippet, query) {
     if (!snippet || !query) return snippet;
     try {
@@ -212,7 +210,6 @@ async function pdfSearch() {
     let highlightedAuthor = author || 'Unknown';
     let highlightedSnippet = snippet;
 
-    // Highlight beroende på vald sökning
     if (field === 'title') {
       highlightedTitle = highlightSnippet(highlightedTitle, query);
     } else if (field === 'author') {
@@ -225,6 +222,7 @@ async function pdfSearch() {
       highlightedSnippet = highlightSnippet(snippet, query);
     }
 
+    // ✅ Här renderar vi PDF-knappen med sin nya klass
     resultAsHtml += `
     <article>
       <h2>${highlightedTitle}</h2>
@@ -233,12 +231,13 @@ async function pdfSearch() {
       <p><b>Date:</b> ${YYMMDD}
       <b>Last modified:</b> ${modYYMMDD}</p>
       <p><b>Pages:</b> ${pages || 'Unknown'}</p>
-${highlightedSnippet ? `<p class="snippet"><b>Text snippet:</b> ${highlightedSnippet}...</p>` : ''}
-      <p><a href="/api/pdf-download/${id}">Download</a></p>      
-<p><button class="btn-show-all-pdf-metadata" data-id="${id}">
-          <span class="show">Show all metadata</span>
-          <span class="hide">Hide metadata</span>
-        </button></p>
+      ${highlightedSnippet ? `<p><b>Text snippet:</b> ${highlightedSnippet}...</p>` : ''}
+            <p><a href="/api/pdf-download/${id}">Download</a></p>
+            <p>
+        <button class="btnShowAllPdfMetadata" data-id="${id}">
+          Show metadata
+        </button>
+      </p>
     </article>
   `;
   }
