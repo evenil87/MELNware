@@ -261,16 +261,12 @@ canvas.waveform {
 
 /* Neon-effekt uppdateras via JS beroende på volymvärde */
 
-.btn-show-all-image-metadata.already-shown {
-  .show {
-    display: none;
-  }
+.btn-show-all-image-metadata.already-shown .show {
+  display: none;
 }
 
-.btn-show-all-image-metadata:not(.already-shown) {
-  .hide {
-    display: none;
-  }
+.btn-show-all-image-metadata:not(.already-shown) .hide {
+  display: none;
 }
 
 .btn-show-all-image-metadata {
