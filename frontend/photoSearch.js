@@ -1,9 +1,9 @@
 // skapar en funktion som visar upp söksidan för bilder i frontend
 export function imageSearchPageContent() {
   return `
-      <h1>Image Search</h1>
+      <h1>Photo Search</h1>
       <label>
-        Search: <select name="image-meta-field">
+        Search for: <select name="image-meta-field">
           <option value="all">All</option>
           <option value="make">Creator</option>
           <option value="file">Filename</option>
@@ -38,30 +38,94 @@ document.body.addEventListener('change', event => {
 // Denna lyssnar efter klick på knappar med klassen btn-show-all-image-metadata
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-image-metadata');
-  if (!button) { return; }
+  if (!button) return;
+
+  // om knappen redan har klassen already-shown, ta bort klassen och ta bort metadata-containern
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    let pre = button.nextElementSibling;
-    pre.remove();
+    let container = button.nextElementSibling;
+    if (container) container.remove();
     return;
   }
 
-  // det som sker nedan är om vi klickar på button med klassen btn-show-all-image-metadata
-  // hämta id från data-id attributet på knappen
+  // här hämtar vi all metadata för bilden från vår rest-api
   let id = button.getAttribute('data-id');
 
-  // här hämtar vi all metadata för bilden från vår rest-api
+  // gör en fetch-anrop till vår api för att hämta all metadata för bilden med det specifika id:et
   let rawResponse = await fetch('/api/image-all-meta/' + id);
   let result = await rawResponse.json();
 
-  // vi skapar ett pre-element för att visa upp all metadata i ett fint format
-  let pre = document.createElement('pre');
-  pre.innerHTML = JSON.stringify(result, null, '  ');
+  // skapar en container för att hålla all metadata
+  let container = document.createElement('div');
+  container.className = 'metadata-container';
 
-  // lägger till det nyss skapade pre-elementet efter knappen
-  button.after(pre);
+  // vi börjar skapa en tabel för att visa all metadata
+  let table = document.createElement('table');
+  table.className = 'metaTable';
+  let tbody = document.createElement('tbody');
+
+  // lägger till en funtion som flattenar objekt
+  // så att vi kan visa all metadata i en tabell utan att det ses en klump
+  function flatten(obj, prefix = '') {
+    if (!obj) return;
+
+    for (let key in obj) {
+      if (!Object.hasOwn(obj, key)) continue;
+
+      let value = obj[key];
+      let fullKey = prefix ? prefix + '.' + key : key;
+
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Om objekt - så försök hitta mer infomration rekursivt
+        flatten(value, fullKey);
+      } else {
+        // Annars skapa en tabellrad med nyckel och värde
+        let tr = document.createElement('tr');
+
+        let tdKey = document.createElement('td');
+        tdKey.textContent = fullKey;
+
+        let tdVal = document.createElement('td');
+        tdVal.textContent = Array.isArray(value)
+          ? value.join(', ') // Om värdet är en array, slå ihop med kommatecken
+          : value; // Annars visa värdet direkt
+
+        // Lägg ihop nyckel och värde i raden
+        tr.appendChild(tdKey);
+        tr.appendChild(tdVal);
+        tbody.appendChild(tr);
+      }
+    }
+  }
+
+
+  // här lägger vi till metadatan i tabellen, börjar med id
+  let trId = document.createElement('tr');
+  let tdIdKey = document.createElement('td');
+  tdIdKey.textContent = 'id';
+  let tdIdVal = document.createElement('td');
+  tdIdVal.textContent = result.id;
+  trId.appendChild(tdIdKey);
+  trId.appendChild(tdIdVal);
+  tbody.appendChild(trId);
+
+  // sedan resten av metadatan
+  let trFile = document.createElement('tr');
+  let tdFileKey = document.createElement('td');
+  let tdFileVal = document.createElement('td');
+  tdFileVal.textContent = result.file;
+  trFile.appendChild(tdFileKey);
+  trFile.appendChild(tdFileVal);
+  tbody.appendChild(trFile);
+
+  // --- Metadata flattenat ---
+  flatten(result.metaPhoto);
+
+  table.appendChild(tbody);
+  container.appendChild(table);
+
+  button.after(container);
   button.classList.add('already-shown');
-
 });
 
 
@@ -110,15 +174,16 @@ async function photoSearch() {
        <a ${lat && lon ? `href="https://maps.google.com/?q=${lat},${lon}" target="_blank"` : ''}>
           <img src="/photos/${File}">
         </a>
+        <p id="greyish">Please click image to see location on Google Maps (if available)</p>
         <h3>${File || 'Unknown'}</h3>
-        <h2>${Creator || 'Unknown'}</h2>
+        <h2>${Creator || 'Unknown'}</h2><br>
         <p><b>Date:</b> ${Date || 'Unknown'}</p>
         <p><b>File source:</b> ${FileSource || 'Unknown'}</p>
         <p><b>Flash:</b> ${Flash || 'Unknown'}</p>
-        <p><a href="/photos/${File}" download>Download file here</a></p>
+        <p><a href="/photos/${File}" download>Download</a></p>
         <p><button class="btn-show-all-image-metadata" data-id="${id}">
-          <span class="show">Show all metadata</span>
-          <span class="hide">Hide all metadata</span>
+          <span class="show">Show metadata</span>
+          <span class="hide">Hide metadata</span>
         </button></p>
       </article>
     `;

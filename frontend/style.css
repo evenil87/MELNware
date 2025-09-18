@@ -36,8 +36,7 @@ header a {
   color: #ffffff;
   /* vit text */
   text-decoration: none;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
+  font-family: 'Roboto';
 }
 
 /* Länkhover i header */
@@ -45,6 +44,7 @@ header a:hover {
   color: #2A3B4D;
   /* mörkblågrå vid hover */
 }
+
 
 /* --- Navigation --- */
 nav ul {
@@ -249,17 +249,36 @@ canvas.waveform {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.btn-show-all-image-metadata.already-shown {
-  .show {
-    display: none;
-  }
+.btn-show-all-image-metadata.already-shown .show {
+  display: none;
 }
 
-.btn-show-all-image-metadata:not(.already-shown) {
-  .hide {
-    display: none;
-  }
+.btn-show-all-image-metadata:not(.already-shown) .hide {
+  display: none;
 }
+
+.btn-show-all-image-metadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btn-show-all-image-metadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btn-show-all-image-metadata.active {
+  background-color: #57779E;
+}
+
 
 img {
   max-width: 100%;
@@ -505,4 +524,22 @@ label {
   .logo img {
     height: 70px;
   }
+}
+
+/*
+.metaTable tr:nth-child(even) {
+  background-color: #edf77c; 
+}
+
+.metaTable tr:nth-child(odd) {
+  background-color: #e1d4d0;
+}
+*/
+
+/* Rad för avancerade sökfält */
+.adv-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
 }
