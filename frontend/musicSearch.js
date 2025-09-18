@@ -366,9 +366,9 @@ document.body.addEventListener('click', async event => {
       let percent = value / 255;
 
       let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, `rgba(244,114,182,${0.6 + percent*0.4})`);
-      gradient.addColorStop(0.5, `rgba(125,211,252,${0.6 + percent*0.4})`);
-      gradient.addColorStop(1, `rgba(196,181,253,${0.6 + percent*0.4})`);
+      gradient.addColorStop(0, `rgba(244,114,182,${0.6 + percent * 0.4})`);
+      gradient.addColorStop(0.5, `rgba(125,211,252,${0.6 + percent * 0.4})`);
+      gradient.addColorStop(1, `rgba(196,181,253,${0.6 + percent * 0.4})`);
 
       ctx.fillStyle = gradient;
       let barHeight = percent * canvas.height;
@@ -396,5 +396,5 @@ document.body.addEventListener('input', event => {
   if (gainNode) gainNode.gain.value = parseFloat(volumeSlider.value);
 
   let percent = parseFloat(volumeSlider.value);
-  volumeSlider.style.background = `linear-gradient(90deg, rgba(249,168,212,${0.3+percent*0.7}) 0%, rgba(165,243,252,${0.3+percent*0.7}) 50%, rgba(199,210,254,${0.3+percent*0.7}) 100%)`;
+  volumeSlider.style.background = `linear-gradient(90deg, rgba(249,168,212,${0.3 + percent * 0.7}) 0%, rgba(165,243,252,${0.3 + percent * 0.7}) 50%, rgba(199,210,254,${0.3 + percent * 0.7}) 100%)`;
 });
