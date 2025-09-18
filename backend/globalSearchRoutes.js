@@ -7,32 +7,33 @@ export default function setupGlobalSearchRoutes(app, db) {
 
       // Photo
       const [photoRows] = await db.execute(
-        `SELECT COUNT(*) AS count FROM photo 
-         WHERE LOWER(metaPhoto->>'$.file') LIKE LOWER(?)
-            OR LOWER(metaPhoto->>'$.metadata.Make') LIKE LOWER(?)`,
-        [like, like]
+        `SELECT COUNT(*) AS count 
+         FROM photo 
+         WHERE JSON_SEARCH(LOWER(metaPhoto), 'all', LOWER(?)) IS NOT NULL`,
+        [like]
       );
 
       // PDF
       const [pdfRows] = await db.execute(
-        `SELECT COUNT(*) AS count FROM pdf 
-         WHERE LOWER(metaPdf->>'$.info.Title') LIKE LOWER(?)
-            OR LOWER(metaPdf->>'$.info.Author') LIKE LOWER(?)`,
-        [like, like]
+        `SELECT COUNT(*) AS count 
+         FROM pdf 
+         WHERE JSON_SEARCH(LOWER(metaPdf), 'all', LOWER(?)) IS NOT NULL`,
+        [like]
       );
 
       // Music
       const [musicRows] = await db.execute(
-        `SELECT COUNT(*) AS count FROM music 
-         WHERE LOWER(metaMusic->>'$.common.title') LIKE LOWER(?)
-            OR LOWER(metaMusic->>'$.common.artist') LIKE LOWER(?)`,
-        [like, like]
+        `SELECT COUNT(*) AS count 
+         FROM music 
+         WHERE JSON_SEARCH(LOWER(metaMusic), 'all', LOWER(?)) IS NOT NULL`,
+        [like]
       );
 
       // PowerPoint
       const [pptRows] = await db.execute(
-        `SELECT COUNT(*) AS count FROM powerPoint 
-         WHERE LOWER(metaPowerPoint->>'$.title') LIKE LOWER(?)`,
+        `SELECT COUNT(*) AS count 
+         FROM powerPoint 
+         WHERE JSON_SEARCH(LOWER(metaPowerPoint), 'all', LOWER(?)) IS NOT NULL`,
         [like]
       );
 
