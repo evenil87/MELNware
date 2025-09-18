@@ -1,7 +1,7 @@
 // skapar en funktion som visar upp söksidan för bilder i frontend
 export function imageSearchPageContent() {
   return `
-      <h1>Image Search</h1>
+      <h1>Photo Search</h1>
       <label>
         Search for: <select name="image-meta-field">
           <option value="all">All</option>
@@ -175,10 +175,10 @@ async function photoSearch() {
         <p><b>Date:</b> ${Date || 'Unknown'}</p>
         <p><b>File source:</b> ${FileSource || 'Unknown'}</p>
         <p><b>Flash:</b> ${Flash || 'Unknown'}</p>
-        <p><a href="/photos/${File}" download>Download file here</a></p>
+        <p><a href="/photos/${File}" download>Download</a></p>
         <p><button class="btn-show-all-image-metadata" data-id="${id}">
-          <span class="show">Show all metadata</span>
-          <span class="hide">Hide all metadata</span>
+          <span class="show">Show metadata</span>
+          <span class="hide">Hide metadata</span>
         </button></p>
       </article>
     `;
