@@ -1,6 +1,7 @@
 export function startPageContent() {
   return `
-    <h1>Welcome to MELNware!</h1>
+  <br>  
+  <h1>Welcome to MELNware!</h1>
     <p><i>A search engine built by students in Data Managment of TUC Yrkeshögskola.</i></p><br>
     <p>Use the menu above to navigate to the different search pages, where you can search through different files such as Photos, PDF, Music and PowerPoint. All search pages have a dropdown menu where you can select which metadata field to search through, and a text input field where you can type your search query. The search results will be displayed below the input field, and will update automatically as you type or change the selected metadata field.</p>
 
