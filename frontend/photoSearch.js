@@ -54,11 +54,13 @@ document.body.addEventListener('click', async event => {
   let container = document.createElement('div');
   container.className = 'metadata-container';
 
+  // vi börjar skapa en tabel för att visa all metadata
   let table = document.createElement('table');
   table.className = 'metaTable';
   let tbody = document.createElement('tbody');
 
-  // --- Flatten helper ---
+  // lägger till en funtion som flattenar objekt
+  // så att vi kan visa all metadata i en tabell utan att det ses en klump
   function flatten(obj, prefix = '') {
     if (!obj) return;
 
@@ -69,7 +71,7 @@ document.body.addEventListener('click', async event => {
       let fullKey = prefix ? prefix + '.' + key : key;
 
       if (value && typeof value === 'object' && !Array.isArray(value)) {
-        // Om objekt → gå djupare
+        // Om objekt - så försök hitta mer infomration rekursivt
         flatten(value, fullKey);
       } else {
         // Annars skapa rad
@@ -90,7 +92,8 @@ document.body.addEventListener('click', async event => {
     }
   }
 
-  // --- ID först ---
+
+  // hämtar Id:et först så att det kommer med från databasen
   let trId = document.createElement('tr');
   let tdIdKey = document.createElement('td');
   tdIdKey.textContent = 'id';
@@ -100,7 +103,7 @@ document.body.addEventListener('click', async event => {
   trId.appendChild(tdIdVal);
   tbody.appendChild(trId);
 
-  // --- File sedan ---
+  // sedan resten av metadatan
   let trFile = document.createElement('tr');
   let tdFileKey = document.createElement('td');
   let tdFileVal = document.createElement('td');
