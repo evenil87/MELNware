@@ -3,7 +3,7 @@ export function imageSearchPageContent() {
   return `
       <h1>Image Search</h1>
       <label>
-        Search: <select name="image-meta-field">
+        Search for: <select name="image-meta-field">
           <option value="all">All</option>
           <option value="make">Creator</option>
           <option value="file">Filename</option>
@@ -38,30 +38,85 @@ document.body.addEventListener('change', event => {
 // Denna lyssnar efter klick på knappar med klassen btn-show-all-image-metadata
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-image-metadata');
-  if (!button) { return; }
+  if (!button) return;
+
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    let pre = button.nextElementSibling;
-    pre.remove();
+    let container = button.nextElementSibling;
+    if (container) container.remove();
     return;
   }
 
-  // det som sker nedan är om vi klickar på button med klassen btn-show-all-image-metadata
-  // hämta id från data-id attributet på knappen
   let id = button.getAttribute('data-id');
-
-  // här hämtar vi all metadata för bilden från vår rest-api
   let rawResponse = await fetch('/api/image-all-meta/' + id);
   let result = await rawResponse.json();
 
-  // vi skapar ett pre-element för att visa upp all metadata i ett fint format
-  let pre = document.createElement('pre');
-  pre.innerHTML = JSON.stringify(result, null, '  ');
+  let container = document.createElement('div');
+  container.className = 'metadata-container';
 
-  // lägger till det nyss skapade pre-elementet efter knappen
-  button.after(pre);
+  let table = document.createElement('table');
+  table.className = 'metaTable';
+  let tbody = document.createElement('tbody');
+
+  // --- Flatten helper ---
+  function flatten(obj, prefix = '') {
+    if (!obj) return;
+
+    for (let key in obj) {
+      if (!Object.hasOwn(obj, key)) continue;
+
+      let value = obj[key];
+      let fullKey = prefix ? prefix + '.' + key : key;
+
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Om objekt → gå djupare
+        flatten(value, fullKey);
+      } else {
+        // Annars skapa rad
+        let tr = document.createElement('tr');
+
+        let tdKey = document.createElement('td');
+        tdKey.textContent = fullKey;
+
+        let tdVal = document.createElement('td');
+        tdVal.textContent = Array.isArray(value)
+          ? value.join(', ')
+          : value;
+
+        tr.appendChild(tdKey);
+        tr.appendChild(tdVal);
+        tbody.appendChild(tr);
+      }
+    }
+  }
+
+  // --- ID först ---
+  let trId = document.createElement('tr');
+  let tdIdKey = document.createElement('td');
+  tdIdKey.textContent = 'id';
+  let tdIdVal = document.createElement('td');
+  tdIdVal.textContent = result.id;
+  trId.appendChild(tdIdKey);
+  trId.appendChild(tdIdVal);
+  tbody.appendChild(trId);
+
+  // --- File sedan ---
+  let trFile = document.createElement('tr');
+  let tdFileKey = document.createElement('td');
+  let tdFileVal = document.createElement('td');
+  tdFileVal.textContent = result.file;
+  trFile.appendChild(tdFileKey);
+  trFile.appendChild(tdFileVal);
+  tbody.appendChild(trFile);
+
+  // --- Metadata flattenat ---
+  flatten(result.metaPhoto);
+
+  table.appendChild(tbody);
+  container.appendChild(table);
+
+  button.after(container);
   button.classList.add('already-shown');
-
 });
 
 
