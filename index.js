@@ -11,6 +11,8 @@ import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 import setupimageRestRoutes from './backend/imageRestRoutes.js';
+// global search import
+import setupGlobalSearchRoutes from './backend/globalSearchRoutes.js';
 
 // Skapa en databasanslutning med hjälp av uppgifterna i db-credentials.js
 const db = await mysql.createConnection(dbCreds);
@@ -26,6 +28,8 @@ setupPowerPointDownloadRoute(app, db);
 setupPdfRestRoutes(app, db);
 setupMusicRestRoutes(app, db);
 setupimageRestRoutes(app, db);
+// global search
+setupGlobalSearchRoutes(app, db);
 
 
 // Låt express hantera statiska filer i frontend-mappen

@@ -5,6 +5,7 @@ import { imageSearchPageContent } from './photoSearch.js';
 import { pdfSearchPageContent } from './pdfSearch.js';
 import { musicSearchPageContent, bindMusicSearchEvents } from './musicSearch.js';
 import { powerPointSearchPageContent } from './powerPointSearch.js';
+import { globalSearchPageContent } from './globalSearch.js';
 
 // Hantera menyval i headern och visa rätt innehåll i main
 // Lyssna på klick i hela bodyn
@@ -26,6 +27,9 @@ function showContent(label) {
   let content;
   if (label === 'Start') {
     content = startPageContent();
+  }
+  else if (label === 'Global search') {
+    content = globalSearchPageContent();
   }
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();
