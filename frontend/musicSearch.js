@@ -3,7 +3,7 @@ export function musicSearchPageContent() {
   return `
     <h1>Search Music</h1>
     <label>
-      Search:
+      Search for:
       <select name="music-meta-field">
         <option value="all">All</option>
         <option value="artist">Artist</option>
@@ -179,7 +179,7 @@ async function musicSearch() {
           </label>
 
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
-          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
+          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show metadata</button></p>
         </article>
       `;
     });
@@ -231,7 +231,7 @@ document.body.addEventListener('click', async event => {
 
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    button.textContent = 'Show all metadata';
+    button.textContent = 'Show metadata';
     let table = button.nextElementSibling;
     if (table && table.tagName === 'TABLE') table.remove();
     return;
