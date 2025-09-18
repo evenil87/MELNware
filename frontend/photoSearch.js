@@ -47,6 +47,7 @@ document.body.addEventListener('click', async event => {
     return;
   }
 
+  // här hämtar vi all metadata för bilden från vår rest-api
   let id = button.getAttribute('data-id');
   let rawResponse = await fetch('/api/image-all-meta/' + id);
   let result = await rawResponse.json();
@@ -168,8 +169,9 @@ async function photoSearch() {
        <a ${lat && lon ? `href="https://maps.google.com/?q=${lat},${lon}" target="_blank"` : ''}>
           <img src="/photos/${File}">
         </a>
+        <p id="greyish">Please click image to see location on Google Maps (if available)</p>
         <h3>${File || 'Unknown'}</h3>
-        <h2>${Creator || 'Unknown'}</h2>
+        <h2>${Creator || 'Unknown'}</h2><br>
         <p><b>Date:</b> ${Date || 'Unknown'}</p>
         <p><b>File source:</b> ${FileSource || 'Unknown'}</p>
         <p><b>Flash:</b> ${Flash || 'Unknown'}</p>
