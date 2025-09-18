@@ -7,7 +7,7 @@ export function startPageContent() {
     <ul>
     <li>On the <b>Search Photo</b>-page you can search through a collection of image files, search through creator and filename. Don't forget to click the images to see where in the world the image is taken!</li>
     <li>On the <b>Search PDF</b>-page you can search through a collection of PDF files, search through title, author and content.</li>
-    <li>On the <b>Search Music</b>-page you can search through a collection of music files, search through artist, album, title, genere and year.</li>
+    <li>On the <b>Search Music</b>-page you can search through a collection of music files, search through artist, album, title, genere and year. And of course you can play the music directly in the browser.</li>
     <li>On the <b>Search PowerPoint</b>-page you can search through a collection of PowerPoint files, search through title, author and content.</li>
     </ul><br>
 
