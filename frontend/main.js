@@ -15,6 +15,13 @@ document.body.addEventListener('click', event => {
   // Läs texten i länken
   let linkText = navLink.textContent;
   // Visa rätt innehåll i main
+
+  // Ta bort 'current' från alla länkar först
+  document.querySelectorAll('header nav a').forEach(a => a.classList.remove('current'));
+
+  // Lägg till 'current' på den klickade länken
+  navLink.classList.add('current');
+
   showContent(linkText);
   // console.log('linkText:', linkText);
 
@@ -30,22 +37,24 @@ function showContent(label) {
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();
   }
-  else if (label === 'Search photo') {
+  else if (label === 'Search Photo') {
     content = imageSearchPageContent();
   }
-  else if (label === 'Search music') {
+  else if (label === 'Search Music') {
     content = musicSearchPageContent();
   }
-  else if (label === 'Search powerpoints') {
+  else if (label === 'Search PowerPoint') {
     content = powerPointSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
 
   // Delegate event binding to the page module
-  if (label === 'Search music') {
+  if (label === 'Search Music') {
     bindMusicSearchEvents();
   }
 }
 
 // Visa startsidan vid laddning
 showContent('Start');
+// Lägg current på Start vid laddning
+document.querySelector('header nav a').classList.add('current');

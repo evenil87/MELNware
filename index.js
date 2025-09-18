@@ -7,7 +7,7 @@ import mysql from 'mysql2/promise';
 // Importera alla rest-routes från backend-mappen
 import setupPowerPointRestRoutes from './backend/powerPointRestRoutes.js';
 import setupPowerPointRestRoutesAllMeta from './backend/powerPointRestRoutesAllMeta.js';
-import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoute.js';
+import setupPowerPointDownloadRoute from './backend/powerPointDownloadRoutes.js';
 import setupPdfRestRoutes from './backend/pdfRestRoutes.js';
 import setupMusicRestRoutes from './backend/musicRestRoutes.js';
 import setupimageRestRoutes from './backend/imageRestRoutes.js';

@@ -2,8 +2,8 @@
 export default function setupPowerPointRestRoutes(app, db) {
   app.get('/api/powerPointSearch/:field/:searchValue', async (req, res) => {
     const { field, searchValue } = req.params;
+    const { from, to, minSlides, maxSlides } = req.query;
 
-    // Validera fältet som söks på
     const validFields = {
       all: 'all',
       title: '$.title',
@@ -12,46 +12,56 @@ export default function setupPowerPointRestRoutes(app, db) {
       creationDate: '$.creationDate'
     };
 
-    // Om fältet inte är giltigt, skicka felmeddelande
     if (!validFields[field]) {
       res.status(400).json({ error: 'Invalid field name!' });
       return;
     }
 
-    let whereClause;
-    let orderBy;
-    let params;
+    let whereClauses = [];
+    let params = [];
 
+    // Sök på valda fält
     if (field === 'all') {
-      // Sök i title, company, creationDate och slides
       const like = `%${searchValue}%`;
-      whereClause = `(
+      whereClauses.push(`(
         LOWER(metaPowerPoint->>'$.title') LIKE LOWER(?)
         OR LOWER(metaPowerPoint->>'$.company') LIKE LOWER(?)
         OR metaPowerPoint->>'$.creationDate' LIKE ?
         OR CAST(metaPowerPoint->>'$.slideCount' AS CHAR) LIKE ?
-      )`;
-      orderBy = `title ASC`;
-      params = [like, like, like, like];
+      )`);
+      params.push(like, like, like, like);
     } else if (field === 'creationDate') {
-      // Speciell hantering för creationDate (ingen wildcard i början)
-      whereClause = `metaPowerPoint->>'$.creationDate' LIKE ?`;
-      orderBy = `CAST(metaPowerPoint->>'$.creationDate' AS CHAR) ASC`;
-      params = [`${searchValue}%`]; // Wildcard i slutet
+      whereClauses.push(`metaPowerPoint->>'$.creationDate' LIKE ?`);
+      params.push(`${searchValue}%`);
     } else if (field === 'slides') {
-      // Sök i slideCount (som text) med wildcard på båda sidor
-      whereClause = `CAST(metaPowerPoint->>'$.slideCount' AS CHAR) LIKE ?`;
-      orderBy = `title ASC`;
-      params = [`%${searchValue}%`];
+      whereClauses.push(`CAST(metaPowerPoint->>'$.slideCount' AS CHAR) LIKE ?`);
+      params.push(`%${searchValue}%`);
     } else {
-      // Hantering för title/company
       const path = validFields[field];
-      whereClause = `LOWER(metaPowerPoint->>'${path}') LIKE LOWER(?)`;
-      orderBy = `title ASC`;
-      params = [`%${searchValue}%`];
+      whereClauses.push(`LOWER(metaPowerPoint->>'${path}') LIKE LOWER(?)`);
+      params.push(`%${searchValue}%`);
     }
 
-    // SQL-frågan
+    // Avancerade filter
+    if (from) {
+      whereClauses.push(`metaPowerPoint->>'$.creationDate' >= ?`);
+      params.push(from);
+    }
+    if (to) {
+      whereClauses.push(`metaPowerPoint->>'$.creationDate' <= ?`);
+      params.push(to);
+    }
+    if (minSlides) {
+      whereClauses.push(`CAST(metaPowerPoint->>'$.slideCount' AS UNSIGNED) >= ?`);
+      params.push(minSlides);
+    }
+    if (maxSlides) {
+      whereClauses.push(`CAST(metaPowerPoint->>'$.slideCount' AS UNSIGNED) <= ?`);
+      params.push(maxSlides);
+    }
+
+    const whereSQL = whereClauses.join(' AND ');
+
     const query = `
       SELECT
         id,
@@ -63,11 +73,10 @@ export default function setupPowerPointRestRoutes(app, db) {
         metaPowerPoint->>'$.original' AS URL,
         metaPowerPoint->>'$.fileName' AS fileName
       FROM powerPoint
-      WHERE ${whereClause}
-      ORDER BY ${orderBy}
+      WHERE ${whereSQL}
+      ORDER BY title ASC
     `;
 
-    // Kör frågan och skicka resultatet
     try {
       const [rows] = await db.execute(query, params);
       res.json(rows);
