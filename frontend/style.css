@@ -25,8 +25,10 @@ body {
 
 /* --- Header --- */
 header {
-  background-color: #E5BCD2; /* ljusrosa bakgrund */
-  color: #8C6475; /* textfärg */
+  background-color: #E5BCD2;
+  /* ljusrosa bakgrund */
+  color: #8C6475;
+  /* textfärg */
   padding: 20px;
 }
 
@@ -41,34 +43,41 @@ header a {
 .logo {
   font-size: 30px;
   margin-bottom: 10px;
-  font-family: 'Permanent Marker'; /* dekorativ font */
+  font-family: 'Permanent Marker';
+  /* dekorativ font */
 }
 
 /* --- Navigation --- */
 nav ul {
-  list-style-type: none; /* inga punkter */
+  list-style-type: none;
+  /* inga punkter */
   padding: 0;
   margin: 0;
 }
 
 nav li {
-  display: inline-block; /* horisontella länkar */
-  padding-right: 10px; /* mellanrum mellan länkar */
+  display: inline-block;
+  /* horisontella länkar */
+  padding-right: 10px;
+  /* mellanrum mellan länkar */
 }
 
 /* --- Main content --- */
 main {
   flex: 1;
   max-width: 700px;
-  margin: 0 auto; /* centrera */
+  margin: 0 auto;
+  /* centrera */
   background-color: #CD948B;
   padding: 20px;
 }
 
 /* --- Footer --- */
 footer {
-  background-color: #7C3852; /* mörk bakgrund */
-  color: #CD948B; /* ljus text */
+  background-color: #7C3852;
+  /* mörk bakgrund */
+  color: #CD948B;
+  /* ljus text */
   padding: 20px;
   text-align: center;
   font-family: 'Roboto';
@@ -98,40 +107,49 @@ h4 {
 /* --- Paragrafer --- */
 p {
   margin: 0;
-  margin-bottom: 12px; /* mellanrum under p */
+  margin-bottom: 12px;
+  /* mellanrum under p */
 }
 
 /* --- Textfält --- */
 input[type="text"] {
-  width: 660px; /* fast bredd */
+  width: 660px;
+  /* fast bredd */
 }
 
 /* --- Artiklar --- */
 article {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #34232A; /* kantlinje */
-  border-radius: 10px; /* rundade hörn */
+  border: 1px solid #34232A;
+  /* kantlinje */
+  border-radius: 10px;
+  /* rundade hörn */
 }
 
 /* Varannan artikels bakgrundsfärg */
 article:nth-child(even) {
-  background-color: #edf77c; /* ljusgul */
+  background-color: #edf77c;
+  /* ljusgul */
 }
 
 article:nth-child(odd) {
-  background-color: #e1d4d0; /* ljusrosa */
+  background-color: #e1d4d0;
+  /* ljusrosa */
 }
 
 /* H3 i artiklar */
 article h3 {
-  font-variant: small-caps; /* små versaler */
+  font-variant: small-caps;
+  /* små versaler */
 }
 
 /* --- Preformatted text --- */
 pre {
-  overflow-x: auto; /* scroll vid lång text */
-  white-space: pre-wrap; /* bryt långa rader */
+  overflow-x: auto;
+  /* scroll vid lång text */
+  white-space: pre-wrap;
+  /* bryt långa rader */
   font-size: 14px;
 }
 
@@ -139,7 +157,9 @@ pre {
 label {
   display: block;
   margin: 20px 0;
-}/* avstånd ovan och under */
+}
+
+/* avstånd ovan och under */
 
 
 /* --- Music Player Styles --- */
@@ -324,6 +344,7 @@ label:not(.checkbox-label) {
   background-color: #f2f2f2;
   font-weight: bold;
 }
+
 /* Markerar med färg vart du befinner dig */
 .current {
   background-color: #F1BEBE;
