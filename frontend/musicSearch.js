@@ -181,7 +181,7 @@ async function musicSearch() {
           </label>
 
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
-          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
+          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show metadata</button></p>
         </article>
       `;
     });
@@ -242,7 +242,7 @@ document.body.addEventListener('click', async event => {
     button.classList.remove('already-shown');
     const container = button.nextElementSibling;
     if (container) container.remove();
-    button.textContent = 'Show all metadata';
+    button.textContent = 'Show metadata';
     return;
   }
 

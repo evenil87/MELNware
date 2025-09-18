@@ -240,6 +240,27 @@ canvas.waveform {
 }
 
 /* Neon-effekt uppdateras via JS beroende på volymvärde */
+.btn-show-all-music-metadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btn-show-all-music-metadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btn-show-all-music-metadata.active {
+  background-color: #57779E;
+}
 
 .btn-show-all-image-metadata.already-shown {
   .show {
