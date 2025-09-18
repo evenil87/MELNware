@@ -14,9 +14,9 @@ export function startPageContent() {
     <p><i>Enjoy your stay!</i></p>
     <p><b>-- The MELNware Team  --</b></p><br>
 
-    <p><i>Note: This is a fictional search engine created for educational purposes. The files and data used in this application are not *real* (per se) and are only meant to demonstrate the functionality of the search engine.</i></p><br>
+    <p><i>Note: This is a fictional search engine created for educational purposes. The files and data used in this application are not *real* (per se) and are only meant to demonstrate the functionality of the search engine.</i></p><br><br>
 
     <h3>About Us</h3><br>
-    <p><i>MELNware is play on words, MELN stands for our students: Malin, Evelina, Linda och Nadia, while the ware comes from datawarehouse - a system used for reporting and data analysis - and since we are styudying data we thought it would be funny.</i></p>
+    <p>MELNware <i>is play on words, </i>MELN<i> stands for our students: </i>Malin, Evelina, Linda <i>and</i> Nadia, <i>while the ware comes from datawarehouse - a system used for reporting and data analysis - and since we are styudying data we thought it would be funny.</i></p>
   `;
 }
