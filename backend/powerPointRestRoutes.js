@@ -5,6 +5,7 @@ export default function setupPowerPointRestRoutes(app, db) {
 
     // Validera fältet som söks på
     const validFields = {
+      all: 'all',
       title: '$.title',
       company: '$.company',
       slides: '$.slideCount',
@@ -17,24 +18,39 @@ export default function setupPowerPointRestRoutes(app, db) {
       return;
     }
 
-    const path = validFields[field];
-
-    // Bygg SQL-frågan baserat på fältet
     let whereClause;
     let orderBy;
-    let param;
+    let params;
 
-    // Speciell hantering för creationDate (ingen wildcard i början)
-    if (field === 'creationDate') {
+    if (field === 'all') {
+      // Sök i title, company, creationDate och slides
+      const like = `%${searchValue}%`;
+      whereClause = `(
+        LOWER(metaPowerPoint->>'$.title') LIKE LOWER(?)
+        OR LOWER(metaPowerPoint->>'$.company') LIKE LOWER(?)
+        OR metaPowerPoint->>'$.creationDate' LIKE ?
+        OR CAST(metaPowerPoint->>'$.slideCount' AS CHAR) LIKE ?
+      )`;
+      orderBy = `title ASC`;
+      params = [like, like, like, like];
+    } else if (field === 'creationDate') {
+      // Speciell hantering för creationDate (ingen wildcard i början)
       whereClause = `metaPowerPoint->>'$.creationDate' LIKE ?`;
       orderBy = `CAST(metaPowerPoint->>'$.creationDate' AS CHAR) ASC`;
-      param = `${searchValue}%`; // Wildcard i slutet
+      params = [`${searchValue}%`]; // Wildcard i slutet
+    } else if (field === 'slides') {
+      // Sök i slideCount (som text) med wildcard på båda sidor
+      whereClause = `CAST(metaPowerPoint->>'$.slideCount' AS CHAR) LIKE ?`;
+      orderBy = `title ASC`;
+      params = [`%${searchValue}%`];
     } else {
-      // Hantering för andra fält
+      // Hantering för title/company
+      const path = validFields[field];
       whereClause = `LOWER(metaPowerPoint->>'${path}') LIKE LOWER(?)`;
       orderBy = `title ASC`;
-      param = `%${searchValue}%`; // Wildcard båda sidor
+      params = [`%${searchValue}%`];
     }
+
     // SQL-frågan
     const query = `
       SELECT
@@ -53,7 +69,7 @@ export default function setupPowerPointRestRoutes(app, db) {
 
     // Kör frågan och skicka resultatet
     try {
-      const [rows] = await db.execute(query, [param]);
+      const [rows] = await db.execute(query, params);
       res.json(rows);
     } catch (err) {
       console.error('DB error:', err);

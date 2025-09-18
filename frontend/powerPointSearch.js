@@ -6,8 +6,9 @@ export function powerPointSearchPageContent() {
       <h1>Search powerpoints</h1>
     <div class="search-controls">
       <label>
-        <span class="label-text">Sök på:</span>
+        <span class="label-text">Search for:</span>
         <select name="powerPointSearchField">
+          <option value="all" selected>All fields</option>
           <option value="title">Title</option>
           <option value="creationDate">Creation date</option>
           <option value="company">Creator</option>
