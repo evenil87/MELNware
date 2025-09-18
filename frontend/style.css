@@ -293,17 +293,6 @@ label:not(.checkbox-label) {
   margin: 20px 0;
 }
 
-.btn-show-all-pdf-metadata.already-shown {
-  .show {
-    display: none;
-  }
-}
-
-.btn-show-all-pdf-metadata:not(.already-shown) {
-  .hide {
-    display: none;
-  }
-}
 
 .btn-advanced-search.already-shown .show {
   display: none;
@@ -534,5 +523,43 @@ label {
 
 /* Ännu mörkare blå när knappen är aktiv */
 .btn-show-all-music-metadata.active {
+  background-color: #57779E;
+}
+
+/* Gör så att Advanced search-knappen och Sort by hamnar på samma rad */
+.search-controls-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* sorteringen längst till höger */
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.search-controls-top label {
+  margin: 0;
+  /* ta bort extra mellanrum */
+}
+
+/* Stilar för Pdf metadata sektionen */
+.btnShowAllPdfMetadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btnShowAllPdfMetadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btnShowAllPdfMetadata.active {
   background-color: #57779E;
 }

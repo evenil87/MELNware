@@ -11,7 +11,7 @@ export default function setupPdfRestRoutes(app, db) {
       const { from, to, minPages, maxPages, sort } = req.query;
 
       // Kolla att 'field' är valid, annars returnera felmeddelande
-      if (!['all', 'title', 'author', 'creator', 'date', 'numpages'].includes(field)) {
+      if (!['all', 'title', 'author', 'creator', 'date', 'numpages', 'text'].includes(field)) {
         return res.status(400).json({ error: 'Invalid field name!' });
       }
 
@@ -37,7 +37,7 @@ export default function setupPdfRestRoutes(app, db) {
 
       let result;
 
-      // Sök både titel och författare om field === 'all'
+      // Sök i Title + Author + Text om field === 'all'
       if (field === 'all') {
         const like = '%' + searchValue + '%';
         [result] = await db.execute(
@@ -53,22 +53,29 @@ export default function setupPdfRestRoutes(app, db) {
                  SUBSTRING(metaPdf->>'$.info.ModDate', 3, 4) AS modYear,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
-                 metaPdf->>'$.numpages'     AS pages
+                 metaPdf->>'$.numpages'     AS pages,
+                 SUBSTRING(metaPdf->>'$.text', 1, 100) AS snippet
           FROM pdf
-          WHERE (LOWER(metaPdf->>'$.info.Title')  LIKE LOWER(?)
-             OR LOWER(metaPdf->>'$.info.Author') LIKE LOWER(?))
-             ${dateFilter}
-             ${pagesFilter}
+          WHERE (
+             LOWER(metaPdf->>'$.info.Title')  LIKE LOWER(?)
+             OR LOWER(metaPdf->>'$.info.Author') LIKE LOWER(?)
+             OR LOWER(metaPdf->>'$.text')        LIKE LOWER(?)
+          )
+          ${dateFilter}
+          ${pagesFilter}
         `,
-          [like, like, ...params]
+          [like, like, like, ...params]
         );
       } else {
+        // Bygg queryPath beroende på vilket fält som valts
         const queryPath =
           field === 'numpages'
             ? "metaPdf->>'$.numpages'"
             : field === 'date'
               ? "metaPdf->>'$.info.CreationDate'"
-              : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
+              : field === 'text'
+                ? "metaPdf->>'$.text'"
+                : `metaPdf->>'$.info.${field.charAt(0).toUpperCase() + field.slice(1)}'`;
 
         [result] = await db.execute(
           `
@@ -83,7 +90,8 @@ export default function setupPdfRestRoutes(app, db) {
                  SUBSTRING(metaPdf->>'$.info.ModDate', 3, 4) AS modYear,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 7, 2) AS modMonth,
                  SUBSTRING(metaPdf->>'$.info.ModDate', 9, 2) AS modDay,
-                 metaPdf->>'$.numpages'     AS pages
+                 metaPdf->>'$.numpages'     AS pages,
+                 SUBSTRING(metaPdf->>'$.text', 1, 100) AS snippet
           FROM pdf
           WHERE LOWER(${queryPath}) LIKE LOWER(?)
           ${dateFilter}
