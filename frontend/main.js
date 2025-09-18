@@ -35,7 +35,7 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Global search') {
+  else if (label === 'Global Search') {
     content = globalSearchPageContent();
   }
   else if (label === 'Search PDF') {
