@@ -7,6 +7,8 @@ export function pdfSearchPageContent() {
           <option value="">All</option>
           <option value="title">Title</option>
           <option value="author">Author</option>
+          <option value="text">Text</option>
+
         </select>
       </label>
 
@@ -189,27 +191,56 @@ async function pdfSearch() {
   let rawResponse = await fetch(url);
   let result = await rawResponse.json();
 
+  // Funktion som highlightar sökresultat
+  function highlightSnippet(snippet, query) {
+    if (!snippet || !query) return snippet;
+    try {
+      let regex = new RegExp(`(${query})`, 'gi');
+      return snippet.replace(regex, '<mark>$1</mark>');
+    } catch (e) {
+      return snippet;
+    }
+  }
+
   let resultAsHtml = `<p>${result.length} results</p>`;
-  for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages }
+  for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages, snippet }
     of result) {
     let YYMMDD = year && month && day ? `${year}-${month}-${day}` : 'Unknown';
     let modYYMMDD = modYear && modMonth && modDay ? `${modYear}-${modMonth}-${modDay}` : 'Unknown';
 
+    let highlightedTitle = title || 'Unknown';
+    let highlightedAuthor = author || 'Unknown';
+    let highlightedSnippet = snippet;
+
+    // Highlight beroende på vald sökning
+    if (field === 'title') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+    } else if (field === 'author') {
+      highlightedAuthor = highlightSnippet(highlightedAuthor, query);
+    } else if (field === 'text') {
+      highlightedSnippet = highlightSnippet(snippet, query);
+    } else if (field === 'all') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+      highlightedAuthor = highlightSnippet(highlightedAuthor, query);
+      highlightedSnippet = highlightSnippet(snippet, query);
+    }
+
     resultAsHtml += `
-      <article>
-        <h2>${title || 'Unknown'}</h2>
-        <p><b>Author:</b> ${author || 'Unknown'}</p>
-        <p><b>PDF creator:</b> ${creator || 'Unknown'}</p>
-        <p><b>Date:</b> ${YYMMDD}
-        <b>Last modified:</b> ${modYYMMDD}</p>
-        <p><b>Pages:</b> ${pages || 'Unknown'}</p>
-        <p><a href="/api/pdf-download/${id}">Download</a></p>
-        <p><button class="btn-show-all-pdf-metadata" data-id="${id}">
-            <span class="show">Show more</span>
-            <span class="hide">Show less</span>
-          </button></p>
-      </article>
-    `;
+    <article>
+      <h2>${highlightedTitle}</h2>
+      <p><b>Author:</b> ${highlightedAuthor}</p>
+      <p><b>PDF creator:</b> ${creator || 'Unknown'}</p>
+      <p><b>Date:</b> ${YYMMDD}
+      <b>Last modified:</b> ${modYYMMDD}</p>
+      <p><b>Pages:</b> ${pages || 'Unknown'}</p>
+${highlightedSnippet ? `<p class="snippet"><b>Text snippet:</b> ${highlightedSnippet}...</p>` : ''}
+      <p><a href="/api/pdf-download/${id}">Download</a></p>      
+<p><button class="btn-show-all-pdf-metadata" data-id="${id}">
+          <span class="show">Show all metadata</span>
+          <span class="hide">Hide metadata</span>
+        </button></p>
+    </article>
+  `;
   }
 
   document.querySelector('.pdf-search-result').innerHTML = resultAsHtml;
