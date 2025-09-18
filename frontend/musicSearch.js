@@ -3,7 +3,7 @@ export function musicSearchPageContent() {
   return `
     <h1>Search Music</h1>
     <label>
-      Search:
+      Search for:
       <select name="music-meta-field">
         <option value="all">All</option>
         <option value="artist">Artist</option>
@@ -68,14 +68,16 @@ export function musicSearchPageContent() {
         max-width: 600px;
       }
       table.metadata-table td {
-        border: 1px solid #ccc;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.05);
         padding: 6px;
         text-align: left;
       }
       table.metadata-table td.key {
         font-weight: bold;
-        background: #f0f0f0;
+        background: rgba(240,240,240,0.3);
         width: 35%;
+        backdrop-filter: blur(4px);
       }
 
       /* Neon-pastell volymkontroll */
@@ -123,14 +125,33 @@ export function musicSearchPageContent() {
         gap: 4px;
         align-items: flex-start;
       }
+
+      /* --- PowerPoint style för metadata-knappen --- */
+      .btn-show-all-music-metadata {
+        background-color: #8EB3C9;
+        /* standard blå */
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-family: 'Roboto', sans-serif;
+      }
+      .btn-show-all-music-metadata:hover {
+        background-color: #759DBC;
+      }
+      .btn-show-all-music-metadata.already-shown {
+        background-color: #57779E;
+      }
     </style>
   `;
 }
 
 // Binder händelser till sökfält och select-fält
 export function bindMusicSearchEvents() {
-  const inputField = document.querySelector('input[name="music-search"]');
-  const selectField = document.querySelector('select[name="music-meta-field"]');
+  let inputField = document.querySelector('input[name="music-search"]');
+  let selectField = document.querySelector('select[name="music-meta-field"]');
   if (!inputField || !selectField) return;
 
   inputField.addEventListener('keyup', musicSearch);
@@ -139,9 +160,9 @@ export function bindMusicSearchEvents() {
 
 // Utför musik-sökning
 async function musicSearch() {
-  const inputField = document.querySelector('input[name="music-search"]');
-  const selectField = document.querySelector('select[name="music-meta-field"]');
-  const resultContainer = document.querySelector('.music-search-result');
+  let inputField = document.querySelector('input[name="music-search"]');
+  let selectField = document.querySelector('select[name="music-meta-field"]');
+  let resultContainer = document.querySelector('.music-search-result');
   if (!inputField || !selectField || !resultContainer) return;
 
   if (inputField.value.trim() === '') {
@@ -149,13 +170,14 @@ async function musicSearch() {
     return;
   }
 
-  const field = selectField.value;
-  const searchValue = encodeURIComponent(inputField.value.trim());
+  let field = selectField.value;
+  let searchValue = encodeURIComponent(inputField.value.trim());
 
   try {
-    const response = await fetch(`/api/music-search/${field}/${searchValue}`);
+    // Hämtar sökresultat från API
+    let response = await fetch(`/api/music-search/${field}/${searchValue}`);
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-    const results = await response.json();
+    let results = await response.json();
 
     let html = `<p>${results.length} results</p>`;
     results.forEach(({ id, fileName, title, artist, album, genre, year }) => {
@@ -179,7 +201,7 @@ async function musicSearch() {
           </label>
 
           <p style="margin-top:4px;"><a href="/music/${fileName}" download>Download</a></p>
-          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show all metadata</button></p>
+          <p><button class="btn-show-all-music-metadata" data-id="${id}">Show metadata</button></p>
         </article>
       `;
     });
@@ -190,38 +212,45 @@ async function musicSearch() {
   }
 }
 
-// Rekursiv funktion för metadata-tabell
-function createTableRows(data, parentKey = '') {
-  const rows = [];
-  for (const key in data) {
-    const value = data[key];
-    const fullKey = parentKey ? `${parentKey} → ${key}` : key;
+// Rekursiv funktion för musikmetadata-tabell
+function buildMusicMetadataRows(obj, tbody, prefix = '') {
+  for (let key in obj) {
+    let value = obj[key];
 
-    const tr = document.createElement('tr');
-    const tdKey = document.createElement('td');
-    tdKey.textContent = fullKey;
-    tdKey.classList.add('key');
+    // Hoppa över file
+    if (prefix === 'metaMusic' && key === 'file') continue;
 
-    const tdValue = document.createElement('td');
+    // Om root common eller format, hoppa men gå rekursivt
+    if (prefix === 'metaMusic' && (key === 'common' || key === 'format')) {
+      if (value && typeof value === 'object') {
+        buildMusicMetadataRows(value, tbody, ''); // tom prefix
+      }
+      continue;
+    }
+
+    // Skapa display-nyckel utan metaMusic-prefix
+    let displayKey = prefix ? `${prefix} → ${key}` : key;
+    if (displayKey.startsWith('metaMusic → ')) {
+      displayKey = displayKey.replace('metaMusic → ', '');
+    }
 
     if (value && typeof value === 'object' && !Array.isArray(value)) {
-      tdValue.textContent = '[Object]';
-      tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr, ...createTableRows(value, fullKey));
-    } else if (Array.isArray(value)) {
-      tdValue.textContent = value.join(', ');
-      tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr);
+      buildMusicMetadataRows(value, tbody, displayKey);
     } else {
-      tdValue.textContent = value ?? 'Unknown';
+      let tr = document.createElement('tr');
+
+      let tdKey = document.createElement('td');
+      tdKey.textContent = displayKey;
+      tdKey.classList.add('key');
+
+      let tdVal = document.createElement('td');
+      tdVal.textContent = Array.isArray(value) ? value.join(', ') : value ?? 'Okänt';
+
       tr.appendChild(tdKey);
-      tr.appendChild(tdValue);
-      rows.push(tr);
+      tr.appendChild(tdVal);
+      tbody.appendChild(tr);
     }
   }
-  return rows;
 }
 
 // Visa/dölj metadata
@@ -231,9 +260,9 @@ document.body.addEventListener('click', async event => {
 
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
-    button.textContent = 'Show all metadata';
-    let table = button.nextElementSibling;
-    if (table && table.tagName === 'TABLE') table.remove();
+    let container = button.nextElementSibling;
+    if (container) container.remove();
+    button.textContent = 'Show metadata';
     return;
   }
 
@@ -243,12 +272,20 @@ document.body.addEventListener('click', async event => {
     if (!rawResponse.ok) throw new Error(`HTTP error ${rawResponse.status}`);
     let result = await rawResponse.json();
 
-    let table = document.createElement('table');
-    table.classList.add('metadata-table');
-    const rows = createTableRows(result);
-    rows.forEach(tr => table.appendChild(tr));
+    let container = document.createElement('div');
+    container.className = 'metadata-container';
 
-    button.after(table);
+    let table = document.createElement('table');
+    table.className = 'metadata-table';
+    let tbody = document.createElement('tbody');
+
+    // Bygg tabellrader rekursivt
+    buildMusicMetadataRows(result, tbody);
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+    button.after(container);
+
     button.classList.add('already-shown');
     button.textContent = 'Hide metadata';
   } catch (err) {
@@ -265,12 +302,12 @@ let gainNode;
 let animationId;
 
 document.body.addEventListener('click', async event => {
-  const playButton = event.target.closest('.btn-play');
+  let playButton = event.target.closest('.btn-play');
   if (!playButton) return;
 
-  const canvas = playButton.nextElementSibling.nextElementSibling;
-  const timeDisplay = playButton.nextElementSibling;
-  const file = playButton.getAttribute('data-file');
+  let canvas = playButton.nextElementSibling.nextElementSibling;
+  let timeDisplay = playButton.nextElementSibling;
+  let file = playButton.getAttribute('data-file');
 
   if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -283,17 +320,17 @@ document.body.addEventListener('click', async event => {
     return;
   }
 
-  const response = await fetch(file);
-  const arrayBuffer = await response.arrayBuffer();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  let response = await fetch(file);
+  let arrayBuffer = await response.arrayBuffer();
+  let audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
   currentSource = audioContext.createBufferSource();
   currentSource.buffer = audioBuffer;
 
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 256;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+  let bufferLength = analyser.frequencyBinCount;
+  let dataArray = new Uint8Array(bufferLength);
 
   gainNode = audioContext.createGain();
 
@@ -304,11 +341,11 @@ document.body.addEventListener('click', async event => {
   currentSource.start();
   playButton.textContent = "Stop";
 
-  const ctx = canvas.getContext('2d');
+  let ctx = canvas.getContext('2d');
 
   function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+    let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    let s = Math.floor(seconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
 
@@ -318,23 +355,23 @@ document.body.addEventListener('click', async event => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (currentSource) {
-      const currentTime = audioContext.currentTime - currentSource.startTime;
+      let currentTime = audioContext.currentTime - currentSource.startTime;
       timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(audioBuffer.duration)}`;
     }
 
-    const barWidth = canvas.width / bufferLength;
+    let barWidth = canvas.width / bufferLength;
 
     for (let i = 0; i < bufferLength; i++) {
-      const value = dataArray[i];
-      const percent = value / 255;
+      let value = dataArray[i];
+      let percent = value / 255;
 
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      let gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, `rgba(244,114,182,${0.6 + percent*0.4})`);
       gradient.addColorStop(0.5, `rgba(125,211,252,${0.6 + percent*0.4})`);
       gradient.addColorStop(1, `rgba(196,181,253,${0.6 + percent*0.4})`);
 
       ctx.fillStyle = gradient;
-      const barHeight = percent * canvas.height;
+      let barHeight = percent * canvas.height;
       ctx.fillRect(i * barWidth, canvas.height - barHeight, barWidth * 0.8, barHeight);
     }
   }
@@ -354,11 +391,10 @@ document.body.addEventListener('click', async event => {
 
 // Neon-volym slider
 document.body.addEventListener('input', event => {
-  const volumeSlider = event.target.closest('.neon-volume');
+  let volumeSlider = event.target.closest('.neon-volume');
   if (!volumeSlider) return;
   if (gainNode) gainNode.gain.value = parseFloat(volumeSlider.value);
 
-  // Intensifiera gradient baserat på volym
-  const percent = parseFloat(volumeSlider.value);
+  let percent = parseFloat(volumeSlider.value);
   volumeSlider.style.background = `linear-gradient(90deg, rgba(249,168,212,${0.3+percent*0.7}) 0%, rgba(165,243,252,${0.3+percent*0.7}) 50%, rgba(199,210,254,${0.3+percent*0.7}) 100%)`;
 });
