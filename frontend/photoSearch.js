@@ -40,6 +40,7 @@ document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btn-show-all-image-metadata');
   if (!button) return;
 
+  // om knappen redan har klassen already-shown, ta bort klassen och ta bort metadata-containern
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
     let container = button.nextElementSibling;
@@ -49,9 +50,12 @@ document.body.addEventListener('click', async event => {
 
   // här hämtar vi all metadata för bilden från vår rest-api
   let id = button.getAttribute('data-id');
+
+  // gör en fetch-anrop till vår api för att hämta all metadata för bilden med det specifika id:et
   let rawResponse = await fetch('/api/image-all-meta/' + id);
   let result = await rawResponse.json();
 
+  // skapar en container för att hålla all metadata
   let container = document.createElement('div');
   container.className = 'metadata-container';
 
@@ -75,7 +79,7 @@ document.body.addEventListener('click', async event => {
         // Om objekt - så försök hitta mer infomration rekursivt
         flatten(value, fullKey);
       } else {
-        // Annars skapa rad
+        // Annars skapa en tabellrad med nyckel och värde
         let tr = document.createElement('tr');
 
         let tdKey = document.createElement('td');
@@ -83,9 +87,10 @@ document.body.addEventListener('click', async event => {
 
         let tdVal = document.createElement('td');
         tdVal.textContent = Array.isArray(value)
-          ? value.join(', ')
-          : value;
+          ? value.join(', ') // Om värdet är en array, slå ihop med kommatecken
+          : value; // Annars visa värdet direkt
 
+        // Lägg ihop nyckel och värde i raden
         tr.appendChild(tdKey);
         tr.appendChild(tdVal);
         tbody.appendChild(tr);
@@ -94,7 +99,7 @@ document.body.addEventListener('click', async event => {
   }
 
 
-  // hämtar Id:et först så att det kommer med från databasen
+  // här lägger vi till metadatan i tabellen, börjar med id
   let trId = document.createElement('tr');
   let tdIdKey = document.createElement('td');
   tdIdKey.textContent = 'id';
