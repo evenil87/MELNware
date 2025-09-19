@@ -235,7 +235,7 @@ async function pdfSearch() {
       highlightedSnippet = highlightSnippet(snippet, query);
     }
 
-    // ✅ Här renderar vi PDF-knappen med sin nya klass
+    // Här renderar vi PDF-knappen med sin nya klass
     resultAsHtml += `
     <article>
       <h2>${highlightedTitle}</h2>

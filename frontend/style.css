@@ -567,3 +567,27 @@ label {
 .btnShowAllPdfMetadata.active {
   background-color: #57779E;
 }
+
+.page-range {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.page-range label {
+  flex: 1;
+  margin: 0;
+}
+
+.date-pickers {
+  display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.date-pickers label {
+  flex: 1;
+  margin: 0;
+}
