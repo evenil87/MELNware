@@ -74,13 +74,25 @@ document.body.addEventListener('click', event => {
   if (!section) return;
 
   if (button.classList.contains('already-shown')) {
+    // 🔄 Stänger avancerad sökning
     button.classList.remove('already-shown');
     section.style.display = 'none';
+
+    // 🧹 Rensa alla fält när vi stänger
+    document.querySelector('input[name="pp-fromDate"]').value = '1994-01-01'; // default
+    document.querySelector('input[name="pp-toDate"]').value = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="pp-minSlides"]').value = '';
+    document.querySelector('input[name="pp-maxSlides"]').value = '';
+
+    // 🔄 Uppdatera sökningen direkt efter reset
+    powerPointSearch();
   } else {
+    // 🔄 Öppnar avancerad sökning
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
+
 
 
 // Visa metadata
