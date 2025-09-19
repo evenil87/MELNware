@@ -41,8 +41,9 @@ Byggd med **Node.js/Express**, **MySQL** och en enkel **vanilla JavaScript-front
 - **Backend:** [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/)  
 - **Databas:** [MySQL](https://www.mysql.com/) (`mysql2/promise`)  
 - **Frontend:** Vanilla JavaScript, HTML, CSS  
-
+---
 **Filstruktur:**
+```txt
 backend/ → REST API för filer (bilder, musik, pdf, powerpoint, global search)
 frontend/ → HTML, CSS, JS för användargränssnittet
 ├─ music/ → Musikfiler
