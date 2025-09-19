@@ -58,6 +58,25 @@ function showContent(label) {
   }
 }
 
+// Hämta knappen
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+// Visa knappen när man scrollar ner
+window.addEventListener('scroll', () => {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    scrollTopBtn.style.display = 'block';
+  } else {
+    scrollTopBtn.style.display = 'none';
+  }
+});
+
+// Klicka på pil upp-knappen för att komma till
+// toppen av sidan
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+
 // Visa startsidan vid laddning
 showContent('Start');
 // Lägg current på Start vid laddning
