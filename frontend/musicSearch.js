@@ -126,7 +126,7 @@ export function musicSearchPageContent() {
         align-items: flex-start;
       }
 
-      /* --- PowerPoint style för metadata-knappen --- */
+      /* --- Music style för metadata-knappen --- */
       .btn-show-all-music-metadata {
         background-color: #8EB3C9;
         /* standard blå */
@@ -172,7 +172,7 @@ async function musicSearch() {
     resultContainer.innerHTML = '';
     return;
   }
-
+  // Hämta valt fält och sökord från input fältet
   let field = selectField.value;
   let searchValue = encodeURIComponent(inputField.value.trim());
 
@@ -181,7 +181,7 @@ async function musicSearch() {
     let response = await fetch(`/api/music-search/${field}/${searchValue}`);
     if (!response.ok) throw new Error(`HTTP error ${response.status}`);
     let results = await response.json();
-
+    // Bygg upp HTML med sökresultaten och spela upp-knappar etc
     let html = `<p>${results.length} results</p>`;
     results.forEach(({ id, fileName, title, artist, album, genre, year }) => {
       html += `
@@ -208,7 +208,7 @@ async function musicSearch() {
         </article>
       `;
     });
-
+    // Visa resultatet
     resultContainer.innerHTML = html;
   } catch (err) {
     resultContainer.innerHTML = `<p style="color:red">Fel vid sökning: ${err.message}</p>`;
@@ -269,6 +269,7 @@ document.body.addEventListener('click', async event => {
     return;
   }
 
+  // Hämta metadata från API och visa i tabell
   let id = button.getAttribute('data-id');
   try {
     let rawResponse = await fetch('/api/music-all-meta/' + id);
@@ -304,6 +305,7 @@ let analyser;
 let gainNode;
 let animationId;
 
+// Lyssna på play-knappar och starta/stoppa uppspelning och animation 
 document.body.addEventListener('click', async event => {
   let playButton = event.target.closest('.btn-play');
   if (!playButton) return;
@@ -313,7 +315,7 @@ document.body.addEventListener('click', async event => {
   let file = playButton.getAttribute('data-file');
 
   if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+  // Om redan spelas, stoppa det 
   if (currentSource) {
     currentSource.stop();
     cancelAnimationFrame(animationId);
@@ -322,10 +324,11 @@ document.body.addEventListener('click', async event => {
     timeDisplay.textContent = "00:00 / 00:00";
     return;
   }
-
+  // Starta ny uppspelning och animation 
   let response = await fetch(file);
   let arrayBuffer = await response.arrayBuffer();
   let audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
 
   currentSource = audioContext.createBufferSource();
   currentSource.buffer = audioBuffer;
@@ -343,7 +346,7 @@ document.body.addEventListener('click', async event => {
 
   currentSource.start();
   playButton.textContent = "Stop";
-
+  // Ställ in canvas för visualisering 
   let ctx = canvas.getContext('2d');
 
   function formatTime(seconds) {
@@ -351,7 +354,7 @@ document.body.addEventListener('click', async event => {
     let s = Math.floor(seconds % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
-
+  // Animationsloop för att rita staplar i canvas 
   function drawStacks() {
     animationId = requestAnimationFrame(drawStacks);
     analyser.getByteFrequencyData(dataArray);
@@ -363,7 +366,7 @@ document.body.addEventListener('click', async event => {
     }
 
     let barWidth = canvas.width / bufferLength;
-
+    // Rita staplar med gradientfärg 
     for (let i = 0; i < bufferLength; i++) {
       let value = dataArray[i];
       let percent = value / 255;
@@ -382,7 +385,7 @@ document.body.addEventListener('click', async event => {
   currentSource.startTime = audioContext.currentTime;
 
   drawStacks();
-
+  // När ljudet slutar, återställ knappen och stoppa animationen
   currentSource.onended = () => {
     playButton.textContent = "Play";
     cancelAnimationFrame(animationId);

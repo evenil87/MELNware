@@ -52,7 +52,8 @@ function showContent(label) {
   }
   document.querySelector('main').innerHTML = content;
 
-  // Delegate event binding to the page module
+  // Delegera event för musik-sökningen
+  // Detta behövs eftersom innehållet i main byts ut
   if (label === 'Music') {
     bindMusicSearchEvents();
   }

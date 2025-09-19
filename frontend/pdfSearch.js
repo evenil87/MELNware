@@ -217,6 +217,8 @@ async function pdfSearch() {
     }
   }
 
+  // Bygg upp resultatet som HTML
+  // Börja med antal träffar
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, fileName, title, author, creator, year, month, day, modYear, modMonth, modDay, pages, snippet }
     of result) {

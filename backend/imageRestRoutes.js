@@ -2,10 +2,10 @@
 export default function setupImageRestRoutes(app, db) {
 
   app.get('/api/image-search/:field/:searchValue', async (req, res) => {
-    // hitta ut field och searchValue från req.params
+    // Hitta ut field och searchValue från req.params
     const { field, searchValue } = req.params;
 
-    // kolla så att field är ett av de tillåtna värdena
+    // Kolla så att field är ett av de tillåtna värdena
     const validFields = {
       all: 'all',
       file: '$.file',
@@ -17,12 +17,12 @@ export default function setupImageRestRoutes(app, db) {
       longitude: '$.metadata.longitude'
     };
 
-    // om field inte är giltigt, returnera ett felmeddelande
+    // Om field inte är giltigt, returnera ett felmeddelande
     if (!validFields[field]) {
       res.json({ error: 'Invalid field name!' });
       return;
     }
-    // nedan börjar vi bygga sql-frågan som ska kunnas användas för att söka genom alla metadatafält
+    // Nedan börjar vi bygga sql-frågan som ska kunnas användas för att söka genom alla metadatafält
     let rows;
     if (field === 'all') {
       const like = '%' + searchValue + '%';
@@ -58,17 +58,17 @@ export default function setupImageRestRoutes(app, db) {
     }
 
     const result = rows.map(row => {
-      // formatera datum så det inte ser helt galet ut för användaren
+      // Formatera datum så det inte ser helt galet ut för användaren
       let formattedDate = row.Date;
       if (formattedDate) {
         try {
           formattedDate = new Date(formattedDate).toISOString().slice(0, 10);
         } catch (e) {
-          // om det inte går, låt det vara som det är
+          // Om det inte går, låt det vara som det är
         }
       }
 
-      // returnera objektet med metadata och formaterat datum
+      // Returnera objektet med metadata och formaterat datum
       return {
         ...row,
         Date: formattedDate,
@@ -80,7 +80,7 @@ export default function setupImageRestRoutes(app, db) {
     });
 
 
-    // retunera sökresultaten som json
+    // Retunera sökresultaten som json
     res.json(result);
   });
 
