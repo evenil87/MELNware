@@ -37,11 +37,11 @@ export function pdfSearchPageContent() {
         <div class="date-pickers">
           <label>
               From date:
-              <input name="pdf-fromDate" type="date" value="1970-01-01">
+              <input name="pdf-fromDate" type="date">
           </label>
           <label>
               To date:
-              <input name="pdf-toDate" type="date" value="${new Date().toISOString().split('T')[0]}">
+              <input name="pdf-toDate" type="date">
           </label>
         </div>
 

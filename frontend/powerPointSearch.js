@@ -74,7 +74,7 @@ document.body.addEventListener('click', event => {
   if (!section) return;
 
   if (button.classList.contains('already-shown')) {
-    // 🔄 Stänger avancerad sökning
+    // Stänger avancerad sökning
     button.classList.remove('already-shown');
     section.style.display = 'none';
 
@@ -84,10 +84,10 @@ document.body.addEventListener('click', event => {
     document.querySelector('input[name="pp-minSlides"]').value = '';
     document.querySelector('input[name="pp-maxSlides"]').value = '';
 
-    // 🔄 Uppdatera sökningen direkt efter reset
+    // Uppdatera sökningen direkt efter reset
     powerPointSearch();
   } else {
-    // 🔄 Öppnar avancerad sökning
+    // Öppnar avancerad sökning
     button.classList.add('already-shown');
     section.style.display = 'block';
   }

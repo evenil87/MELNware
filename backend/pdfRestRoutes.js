@@ -145,6 +145,46 @@ export default function setupPdfRestRoutes(app, db) {
     }
   });
 
+  // Route som hämtar första creationDate
+  app.get('/api/pdf-min-date', async (req, res) => {
+    try {
+      const [rows] = await db.execute(`
+      SELECT MIN(STR_TO_DATE(SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 8), '%Y%m%d')) AS minDate
+      FROM pdf
+    `);
+
+      if (rows[0] && rows[0].minDate) {
+        const minDate = new Date(rows[0].minDate).toISOString().split("T")[0];
+        res.json({ minDate });
+      } else {
+        res.json({ minDate: "1970-01-01" });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+
+  // Route som hämtar sista creationDate
+  app.get('/api/pdf-max-date', async (req, res) => {
+    try {
+      const [rows] = await db.execute(`
+      SELECT MAX(STR_TO_DATE(SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 8), '%Y%m%d')) AS maxDate
+      FROM pdf
+    `);
+
+      if (rows[0] && rows[0].maxDate) {
+        const maxDate = new Date(rows[0].maxDate).toISOString().split("T")[0];
+        res.json({ maxDate });
+      } else {
+        res.json({ maxDate: new Date().toISOString().split("T")[0] });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+
   // Route för nedladdning av pdf-fil
   const PDF_DIR = path.resolve('frontend/pdfs');
 
