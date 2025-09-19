@@ -54,7 +54,7 @@ nav ul {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 30px;
 }
 
 nav li {
@@ -251,14 +251,34 @@ canvas.waveform {
 
 /* Neon-effekt uppdateras via JS beroende på volymvärde */
 
+.btn-show-all-image-metadata.already-shown .show {
+  display: none;
+}
+
 .btn-show-all-image-metadata:not(.already-shown) .hide {
   display: none;
 }
 
-.btn-show-all-image-metadata:not(.already-shown) {
-  .hide {
-    display: none;
-  }
+.btn-show-all-image-metadata {
+  background-color: #8EB3C9;
+  /* standard blå */
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Lite mörkare blå vid hover */
+.btn-show-all-image-metadata:hover {
+  background-color: #759DBC;
+}
+
+/* Ännu mörkare blå när knappen är aktiv */
+.btn-show-all-image-metadata.active {
+  background-color: #57779E;
 }
 
 img {
