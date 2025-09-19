@@ -563,3 +563,8 @@ label {
 .btnShowAllPdfMetadata.active {
   background-color: #57779E;
 }
+
+#greyish {
+  color: rgb(69, 69, 69);
+  font-size: 12px;
+}
