@@ -96,9 +96,9 @@ document.body.addEventListener('click', event => {
     button.classList.remove('already-shown');
     section.style.display = 'none';
 
-    // 🧹 Rensa alla fält när vi stänger
-    document.querySelector('input[name="pdf-fromDate"]').value = '1970-01-01'; // eller YYYY-MM-DD om du vill ha det som default
-    document.querySelector('input[name="pdf-toDate"]').value = new Date().toISOString().split('T')[0];
+    // Rensa alla fält när vi stänger
+    document.querySelector('input[name="pdf-fromDate"]').value = '';
+    document.querySelector('input[name="pdf-toDate"]').value = '';
     document.querySelector('input[name="pdf-minPages"]').value = '';
     document.querySelector('input[name="pdf-maxPages"]').value = '';
 
