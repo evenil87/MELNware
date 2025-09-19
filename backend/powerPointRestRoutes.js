@@ -4,6 +4,7 @@ export default function setupPowerPointRestRoutes(app, db) {
     const { field, searchValue } = req.params;
     const { from, to, minSlides, maxSlides } = req.query;
 
+    // Validera fältet
     const validFields = {
       all: 'all',
       title: '$.title',
@@ -12,11 +13,13 @@ export default function setupPowerPointRestRoutes(app, db) {
       creationDate: '$.creationDate'
     };
 
+    // Om fältet inte är giltigt, skicka felmeddelande
     if (!validFields[field]) {
       res.status(400).json({ error: 'Invalid field name!' });
       return;
     }
 
+    // Bygg WHERE-klausuler och parametrar för SQL-frågan
     let whereClauses = [];
     let params = [];
 
@@ -42,7 +45,7 @@ export default function setupPowerPointRestRoutes(app, db) {
       params.push(`%${searchValue}%`);
     }
 
-    // Avancerade filter
+    // Avancerade filter 
     if (from) {
       whereClauses.push(`metaPowerPoint->>'$.creationDate' >= ?`);
       params.push(from);
@@ -77,6 +80,7 @@ export default function setupPowerPointRestRoutes(app, db) {
       ORDER BY title ASC
     `;
 
+    // Genomför frågan och skicka resultatet
     try {
       const [rows] = await db.execute(query, params);
       res.json(rows);

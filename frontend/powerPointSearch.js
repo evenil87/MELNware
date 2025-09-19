@@ -1,4 +1,4 @@
-// --- PowerPoint Search Page Content ---
+// PowerPoint Search Page Content
 export function powerPointSearchPageContent() {
   return `
     <h1>Search PowerPoint</h1>
@@ -34,20 +34,20 @@ export function powerPointSearchPageContent() {
   `;
 }
 
-// --- Hjälpfunktioner ---
+// Hjälpfunktioner för att visa värden i sökresultaten på ett bra sätt
 function displayValue(val) {
   if (!val) return 'Unknown';
   if (val.trim && val.trim() === '-') return 'Unknown';
   return val;
 }
-
+// Formaterar datum för visning (i sökresultaten) 
 function displayDate(val) {
   if (!val) return 'Unknown';
   if (val.trim && (val.trim() === '-' || val.trim() === '')) return 'Unknown';
   return val.split(' ')[0]; // yyyy-mm-dd
 }
 
-// Markerar söktermen i text med <mark>-taggar
+// Markerar träffar i en textsträng
 function highlightSnippet(snippet, query) {
   if (!snippet || !query) return snippet;
   const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -59,13 +59,15 @@ function highlightSnippet(snippet, query) {
   }
 }
 
-// --- Event Listeners ---
+// Event listeners
+// Lyssnar på keyup i input-fältet
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="powerPointSearch"]');
   if (!inputField) return;
   powerPointSearch();
 });
 
+// Lyssnar på ändringar i select och advanced search fälten 
 document.body.addEventListener('change', event => {
   if (event.target.closest('select[name="powerPointSearchField"]')) {
     document.querySelector('input[name="powerPointSearch"]').value = '';
@@ -76,17 +78,18 @@ document.body.addEventListener('change', event => {
   }
 });
 
+// Lyssnar på klick på advanced search knappen 
 document.body.addEventListener('click', event => {
   let button = event.target.closest('#btnAdvancedSearch');
   if (!button) return;
 
   let section = document.querySelector('#advancedSearchFields');
   if (!section) return;
-
+  // Visa/dölj advanced search fälten
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
     section.style.display = 'none';
-
+    // Rensa alla fält när vi stänger advanced search
     document.querySelector('input[name="pp-fromDate"]').value = '1994-01-01';
     document.querySelector('input[name="pp-toDate"]').value = new Date().toISOString().split('T')[0];
     document.querySelector('input[name="pp-minSlides"]').value = '';
@@ -99,7 +102,7 @@ document.body.addEventListener('click', event => {
   }
 });
 
-// Visa/dölj metadata
+// Visa/dölj metadata 
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btnShowAllPowerPointMetadata');
   if (!button) return;
@@ -110,7 +113,7 @@ document.body.addEventListener('click', async event => {
     button.textContent = 'Show metadata';
     return;
   }
-
+  // Hämta all metadata för PowerPoint-filen från vår rest-api
   let id = button.getAttribute('data-id');
   let rawResponse = await fetch('/api/powerPoint-all-meta/' + id);
   let result = await rawResponse.json();
@@ -144,7 +147,7 @@ document.body.addEventListener('click', async event => {
   button.textContent = 'Hide metadata';
 });
 
-// --- PowerPoint Search Function ---
+// Funktion som gör själva sökningen mot API:et 
 async function powerPointSearch() {
   let inputField = document.querySelector('input[name="powerPointSearch"]');
   let query = inputField.value.trim();
@@ -152,7 +155,7 @@ async function powerPointSearch() {
     document.querySelector('.powerPointSearchResult').innerHTML = '';
     return;
   }
-
+  // Vilket fält som ska sökas i 
   let field = document.querySelector('select[name="powerPointSearchField"]').value;
 
   let fromDate = document.querySelector('input[name="pp-fromDate"]').value;
@@ -175,7 +178,7 @@ async function powerPointSearch() {
     let highlightedTitle = title || 'Unknown';
     let highlightedCompany = company || 'Unknown';
     let highlightedDate = displayDate(date);
-
+    // Highlight bara i det/de fält som söks på 
     if (field === 'title') {
       highlightedTitle = highlightSnippet(highlightedTitle, query);
     } else if (field === 'company') {
@@ -187,7 +190,7 @@ async function powerPointSearch() {
       highlightedCompany = highlightSnippet(highlightedCompany, query);
       highlightedDate = highlightSnippet(highlightedDate, query);
     }
-
+    // Bygg upp HTML för varje sökresultat 
     resultAsHtml += `
       <article>
         <h2>${displayValue(highlightedTitle)}</h2><br>

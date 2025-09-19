@@ -1,4 +1,4 @@
-// Exporterar en funktion som sätter upp REST API-rutter för musik
+// Exporterar en funktion som sätter upp REST API-routes för musik
 export default function setupMusicRestRoutes(app, db) {
 
   // Musik-sök API
@@ -29,7 +29,7 @@ export default function setupMusicRestRoutes(app, db) {
               OR LOWER(metaMusic->>'$.common.genre[0]') LIKE LOWER(?)`,
           [like, like, like, like]
         );
-        
+
         return res.json(result);
       }
 
@@ -47,6 +47,7 @@ export default function setupMusicRestRoutes(app, db) {
         [`%${searchValue}%`]
       );
 
+      // Returnera sökresultaten som JSON
       res.json(result);
     } catch (err) {
       console.error(err);

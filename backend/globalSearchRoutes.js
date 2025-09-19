@@ -1,11 +1,11 @@
-// restroutes for a new page: global search
+// Rest Route för Global Search
 export default function setupGlobalSearchRoutes(app, db) {
   app.get('/api/global-search/:query', async (req, res) => {
     try {
       const { query } = req.params;
       const like = `%${query}%`;
 
-      // Photo
+      // Foto (photos)
       const [photoRows] = await db.execute(
         `SELECT COUNT(*) AS count 
          FROM photo 
@@ -13,7 +13,7 @@ export default function setupGlobalSearchRoutes(app, db) {
         [like]
       );
 
-      // PDF
+      // PDF 
       const [pdfRows] = await db.execute(
         `SELECT COUNT(*) AS count 
          FROM pdf 
@@ -21,7 +21,7 @@ export default function setupGlobalSearchRoutes(app, db) {
         [like]
       );
 
-      // Music
+      // Musik (music)
       const [musicRows] = await db.execute(
         `SELECT COUNT(*) AS count 
          FROM music 
@@ -37,6 +37,7 @@ export default function setupGlobalSearchRoutes(app, db) {
         [like]
       );
 
+      // Returnera antalet träffar för varje filtyp
       res.json({
         photo: photoRows[0].count,
         pdf: pdfRows[0].count,

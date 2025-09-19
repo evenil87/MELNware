@@ -194,6 +194,7 @@ export default function setupPdfRestRoutes(app, db) {
     return full;
   }
 
+  // Route för nedladdning av pdf-fil
   app.get('/api/pdf-download/:id', async (req, res) => {
     try {
       const { id } = req.params;
