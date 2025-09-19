@@ -43,17 +43,17 @@ Byggd med **Node.js/Express**, **MySQL** och en enkel **vanilla JavaScript-front
 - **Frontend:** Vanilla JavaScript, HTML, CSS  
 
 **Filstruktur:**
-backend/ - REST API för filer (bilder, musik, pdf, powerpoint, global search)
-frontend/ - HTML, CSS, JS för användargränssnittet
-music/ - Musikfiler
-pdfs/ - PDF-filer
-photos/ - Bildfiler
-powerpoint/- PowerPoint-filer
-video/ - (framtida stöd för video)
-index.html - Startsida
-main.js - Navigation och sidinnehåll
-style.css - Stilmall
-database/ - Databasrelaterade filer (förutom dbImportPowerPoint.js som ligger utanför då den inte kunde hittas när den låg inuti mappen)
+backend/ → REST API för filer (bilder, musik, pdf, powerpoint, global search)
+frontend/ → HTML, CSS, JS för användargränssnittet
+├─ music/ → Musikfiler
+├─ pdfs/ → PDF-filer
+├─ photos/ → Bildfiler
+├─ powerpoint/→ PowerPoint-filer
+├─ video/ → (framtida stöd för video)
+├─ index.html → Startsida
+├─ main.js → Navigation och sidinnehåll
+└─ style.css → Stilmall
+database/ → Databasrelaterade filer(förutom dbImportPowerPoint.js som ligger utanför då den inte kunde hittas när den låg inuti mappen)
 ---
 
 ## Installation
