@@ -13,7 +13,7 @@ export function musicSearchPageContent() {
       </select>
     </label>
     <label>
-      <input name="music-search" type="text" placeholder="Search amongst music files">
+      <input name="music-search" type="text" placeholder="Search among music files">
     </label>
     <section class="music-search-result"></section>
 

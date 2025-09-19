@@ -12,7 +12,7 @@ export function pdfSearchPageContent() {
       </label>
 
       <label>
-        <input name="pdf-search" type="text" placeholder="Search">
+        <input name="pdf-search" type="text" placeholder="Search among PDF files">
       </label>
 
       <div class="search-controls-top">
