@@ -152,12 +152,11 @@ export default function setupPdfRestRoutes(app, db) {
       SELECT MIN(STR_TO_DATE(SUBSTRING(metaPdf->>'$.info.CreationDate', 3, 8), '%Y%m%d')) AS minDate
       FROM pdf
     `);
-
-      if (rows[0] && rows[0].minDate) {
+      if (rows[0]?.minDate) {
         const minDate = new Date(rows[0].minDate).toISOString().split("T")[0];
         res.json({ minDate });
       } else {
-        res.json({ minDate: "1970-01-01" });
+        res.json({});
       }
     } catch (err) {
       console.error(err);
