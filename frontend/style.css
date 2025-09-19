@@ -621,3 +621,10 @@ label {
   color: rgb(69, 69, 69);
   font-size: 12px;
 }
+
+mark {
+  background-color: #8EB3C9;
+  color: #fff;
+  padding: 0 2px;
+  border-radius: 3px;
+}
