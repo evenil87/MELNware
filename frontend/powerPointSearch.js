@@ -21,7 +21,7 @@ export function powerPointSearchPageContent() {
 
     <section id="advancedSearchFields" style="display:none; margin-top:10px;">
       <div class="adv-row">
-        <label>From date: <input type="date" name="pp-fromDate" value="1970-01-01"></label>
+        <label>From date: <input type="date" name="pp-fromDate" value="1994-01-01"></label>
         <label>To date: <input type="date" name="pp-toDate" value="${new Date().toISOString().split('T')[0]}"></label>
       </div>
       <div class="adv-row">
@@ -34,7 +34,7 @@ export function powerPointSearchPageContent() {
   `;
 }
 
-// --- Helper Functions ---
+// --- Hjälpfunktioner ---
 function displayValue(val) {
   if (!val) return 'Unknown';
   if (val.trim && val.trim() === '-') return 'Unknown';
@@ -47,24 +47,33 @@ function displayDate(val) {
   return val.split(' ')[0]; // yyyy-mm-dd
 }
 
-// --- Event Listeners ---
+// Markerar söktermen i text med <mark>-taggar
+function highlightSnippet(snippet, query) {
+  if (!snippet || !query) return snippet;
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try {
+    let regex = new RegExp(`(${escapedQuery})`, 'gi');
+    return snippet.replace(regex, '<mark>$1</mark>');
+  } catch (e) {
+    return snippet;
+  }
+}
 
-// Keyup i sökfältet
+// --- Event Listeners ---
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="powerPointSearch"]');
   if (!inputField) return;
   powerPointSearch();
 });
 
-// Ändring av fält
 document.body.addEventListener('change', event => {
-  let select = event.target.closest('select[name="powerPointSearchField"]');
-  if (!select) return;
-  // Rensa sökfältet när man ändrar i dropdown
-  const inputField = document.querySelector('input[name="powerPointSearch"]');
-  if (inputField) inputField.value = '';
-
-  powerPointSearch();
+  if (event.target.closest('select[name="powerPointSearchField"]')) {
+    document.querySelector('input[name="powerPointSearch"]').value = '';
+    powerPointSearch();
+  }
+  if (event.target.closest('#advancedSearchFields')) {
+    powerPointSearch();
+  }
 });
 
 document.body.addEventListener('click', event => {
@@ -77,14 +86,20 @@ document.body.addEventListener('click', event => {
   if (button.classList.contains('already-shown')) {
     button.classList.remove('already-shown');
     section.style.display = 'none';
+
+    document.querySelector('input[name="pp-fromDate"]').value = '1994-01-01';
+    document.querySelector('input[name="pp-toDate"]').value = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="pp-minSlides"]').value = '';
+    document.querySelector('input[name="pp-maxSlides"]').value = '';
+
+    powerPointSearch();
   } else {
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
 
-
-// Visa metadata
+// Visa/dölj metadata
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btnShowAllPowerPointMetadata');
   if (!button) return;
@@ -140,7 +155,6 @@ async function powerPointSearch() {
 
   let field = document.querySelector('select[name="powerPointSearchField"]').value;
 
-  // Avancerade filter
   let fromDate = document.querySelector('input[name="pp-fromDate"]').value;
   let toDate = document.querySelector('input[name="pp-toDate"]').value;
   let minSlides = document.querySelector('input[name="pp-minSlides"]').value;
@@ -157,11 +171,28 @@ async function powerPointSearch() {
 
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, title, company, date, slides } of result) {
+    // Highlight titel, creator och datum
+    let highlightedTitle = title || 'Unknown';
+    let highlightedCompany = company || 'Unknown';
+    let highlightedDate = displayDate(date);
+
+    if (field === 'title') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+    } else if (field === 'company') {
+      highlightedCompany = highlightSnippet(highlightedCompany, query);
+    } else if (field === 'creationDate') {
+      highlightedDate = highlightSnippet(highlightedDate, query);
+    } else if (field === 'all') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+      highlightedCompany = highlightSnippet(highlightedCompany, query);
+      highlightedDate = highlightSnippet(highlightedDate, query);
+    }
+
     resultAsHtml += `
       <article>
-        <h2>${displayValue(title)}</h2><br>
-        <p><b>Creator:</b> ${displayValue(company)}</p>
-        <p><b>Created:</b> ${displayDate(date)}</p>
+        <h2>${displayValue(highlightedTitle)}</h2><br>
+        <p><b>Creator:</b> ${displayValue(highlightedCompany)}</p>
+        <p><b>Created:</b> ${highlightedDate}</p>
         <p><b>Number of slides:</b> ${displayValue(slides)}</p>
         <p><a href="/api/powerPoint-download/${id}">Download</a></p>
         <p><button class="btnShowAllPowerPointMetadata" data-id="${id}">Show metadata</button></p>

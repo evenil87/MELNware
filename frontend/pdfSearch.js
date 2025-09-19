@@ -37,11 +37,11 @@ export function pdfSearchPageContent() {
         <div class="date-pickers">
           <label>
               From date:
-              <input name="pdf-fromDate" type="date" value="1970-01-01">
+              <input name="pdf-fromDate" type="date">
           </label>
           <label>
               To date:
-              <input name="pdf-toDate" type="date" value="${new Date().toISOString().split('T')[0]}">
+              <input name="pdf-toDate" type="date">
           </label>
         </div>
 
@@ -90,14 +90,27 @@ document.body.addEventListener('click', event => {
   if (!button) return;
   let section = document.querySelector('.advanced-search');
   if (!section) return;
+
   if (button.classList.contains('already-shown')) {
+    // Stäng avancerad sökning
     button.classList.remove('already-shown');
     section.style.display = 'none';
+
+    // 🧹 Rensa alla fält när vi stänger
+    document.querySelector('input[name="pdf-fromDate"]').value = '1970-01-01'; // eller YYYY-MM-DD om du vill ha det som default
+    document.querySelector('input[name="pdf-toDate"]').value = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="pdf-minPages"]').value = '';
+    document.querySelector('input[name="pdf-maxPages"]').value = '';
+
+    // Uppdatera sökningen direkt efter reset
+    pdfSearch();
   } else {
+    // Öppna avancerad sökning
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
+
 
 // Funktion som bygger metadatans tabellrader
 // obj = objektet vi går igenom
@@ -226,7 +239,7 @@ async function pdfSearch() {
       highlightedSnippet = highlightSnippet(snippet, query);
     }
 
-    // ✅ Här renderar vi PDF-knappen med sin nya klass
+    // Här renderar vi PDF-knappen med sin nya klass
     resultAsHtml += `
     <article>
       <h2>${highlightedTitle}</h2>
