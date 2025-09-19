@@ -294,14 +294,6 @@ label:not(.checkbox-label) {
 }
 
 
-.btn-advanced-search.already-shown .show {
-  display: none;
-}
-
-.btn-advanced-search:not(.already-shown) .hide {
-  display: none;
-}
-
 .metaTable {
   border-collapse: collapse;
   width: 100%;
@@ -448,27 +440,39 @@ label {
   word-wrap: break-word;
 }
 
-#btnAdvancedSearch {
+/* Grundutseende */
+#btnAdvancedSearch,
+.btn-advanced-search {
   margin-top: 10px;
   padding: 8px 14px;
   font-size: 14px;
   border: none;
   border-radius: 6px;
   background-color: #8EB3C9;
-  /* behåll Advanced Search */
   color: #fff;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   font-family: 'Roboto', sans-serif;
 }
 
-#btnAdvancedSearch:hover {
+#btnAdvancedSearch:hover,
+.btn-advanced-search:hover {
   background-color: #759DBC;
 }
 
-#btnAdvancedSearch.already-shown {
+#btnAdvancedSearch.already-shown,
+.btn-advanced-search.already-shown {
   background-color: #57779E;
   color: #fff;
+}
+
+/* Behåll din logik för show/hide */
+.btn-advanced-search.already-shown .show {
+  display: none;
+}
+
+.btn-advanced-search:not(.already-shown) .hide {
+  display: none;
 }
 
 .logo {

@@ -21,7 +21,7 @@ export function powerPointSearchPageContent() {
 
     <section id="advancedSearchFields" style="display:none; margin-top:10px;">
       <div class="adv-row">
-        <label>From date: <input type="date" name="pp-fromDate" value="1970-01-01"></label>
+        <label>From date: <input type="date" name="pp-fromDate" value="1994-01-01"></label>
         <label>To date: <input type="date" name="pp-toDate" value="${new Date().toISOString().split('T')[0]}"></label>
       </div>
       <div class="adv-row">
