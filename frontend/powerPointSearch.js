@@ -34,7 +34,7 @@ export function powerPointSearchPageContent() {
   `;
 }
 
-// --- Helper Functions ---
+// --- Hjälpfunktioner ---
 function displayValue(val) {
   if (!val) return 'Unknown';
   if (val.trim && val.trim() === '-') return 'Unknown';
@@ -47,18 +47,28 @@ function displayDate(val) {
   return val.split(' ')[0]; // yyyy-mm-dd
 }
 
-// --- Event Listeners ---
+// Markerar söktermen i text med <mark>-taggar
+function highlightSnippet(snippet, query) {
+  if (!snippet || !query) return snippet;
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try {
+    let regex = new RegExp(`(${escapedQuery})`, 'gi');
+    return snippet.replace(regex, '<mark>$1</mark>');
+  } catch (e) {
+    return snippet;
+  }
+}
 
-// Keyup i sökfältet
+// --- Event Listeners ---
 document.body.addEventListener('keyup', event => {
   let inputField = event.target.closest('input[name="powerPointSearch"]');
   if (!inputField) return;
   powerPointSearch();
 });
 
-// Ändring av fält
 document.body.addEventListener('change', event => {
   if (event.target.closest('select[name="powerPointSearchField"]')) {
+    document.querySelector('input[name="powerPointSearch"]').value = '';
     powerPointSearch();
   }
   if (event.target.closest('#advancedSearchFields')) {
@@ -74,28 +84,22 @@ document.body.addEventListener('click', event => {
   if (!section) return;
 
   if (button.classList.contains('already-shown')) {
-    // Stänger avancerad sökning
     button.classList.remove('already-shown');
     section.style.display = 'none';
 
-    // 🧹 Rensa alla fält när vi stänger
-    document.querySelector('input[name="pp-fromDate"]').value = '1994-01-01'; // default
+    document.querySelector('input[name="pp-fromDate"]').value = '1994-01-01';
     document.querySelector('input[name="pp-toDate"]').value = new Date().toISOString().split('T')[0];
     document.querySelector('input[name="pp-minSlides"]').value = '';
     document.querySelector('input[name="pp-maxSlides"]').value = '';
 
-    // Uppdatera sökningen direkt efter reset
     powerPointSearch();
   } else {
-    // Öppnar avancerad sökning
     button.classList.add('already-shown');
     section.style.display = 'block';
   }
 });
 
-
-
-// Visa metadata
+// Visa/dölj metadata
 document.body.addEventListener('click', async event => {
   let button = event.target.closest('.btnShowAllPowerPointMetadata');
   if (!button) return;
@@ -151,7 +155,6 @@ async function powerPointSearch() {
 
   let field = document.querySelector('select[name="powerPointSearchField"]').value;
 
-  // Avancerade filter
   let fromDate = document.querySelector('input[name="pp-fromDate"]').value;
   let toDate = document.querySelector('input[name="pp-toDate"]').value;
   let minSlides = document.querySelector('input[name="pp-minSlides"]').value;
@@ -168,11 +171,28 @@ async function powerPointSearch() {
 
   let resultAsHtml = `<p>${result.length} results</p>`;
   for (let { id, title, company, date, slides } of result) {
+    // Highlight titel, creator och datum
+    let highlightedTitle = title || 'Unknown';
+    let highlightedCompany = company || 'Unknown';
+    let highlightedDate = displayDate(date);
+
+    if (field === 'title') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+    } else if (field === 'company') {
+      highlightedCompany = highlightSnippet(highlightedCompany, query);
+    } else if (field === 'creationDate') {
+      highlightedDate = highlightSnippet(highlightedDate, query);
+    } else if (field === 'all') {
+      highlightedTitle = highlightSnippet(highlightedTitle, query);
+      highlightedCompany = highlightSnippet(highlightedCompany, query);
+      highlightedDate = highlightSnippet(highlightedDate, query);
+    }
+
     resultAsHtml += `
       <article>
-        <h2>${displayValue(title)}</h2><br>
-        <p><b>Creator:</b> ${displayValue(company)}</p>
-        <p><b>Created:</b> ${displayDate(date)}</p>
+        <h2>${displayValue(highlightedTitle)}</h2><br>
+        <p><b>Creator:</b> ${displayValue(highlightedCompany)}</p>
+        <p><b>Created:</b> ${highlightedDate}</p>
         <p><b>Number of slides:</b> ${displayValue(slides)}</p>
         <p><a href="/api/powerPoint-download/${id}">Download</a></p>
         <p><button class="btnShowAllPowerPointMetadata" data-id="${id}">Show metadata</button></p>
