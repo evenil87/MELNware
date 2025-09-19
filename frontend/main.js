@@ -35,16 +35,16 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Search PDF') {
+  else if (label === 'PDF') {
     content = pdfSearchPageContent();
   }
-  else if (label === 'Search Photo') {
+  else if (label === 'Photo') {
     content = imageSearchPageContent();
   }
-  else if (label === 'Search Music') {
+  else if (label === 'Music') {
     content = musicSearchPageContent();
   }
-  else if (label === 'Search PowerPoint') {
+  else if (label === 'PowerPoint') {
     content = powerPointSearchPageContent();
   }
   else if (label === 'Global Search') {
@@ -53,7 +53,7 @@ function showContent(label) {
   document.querySelector('main').innerHTML = content;
 
   // Delegate event binding to the page module
-  if (label === 'Search Music') {
+  if (label === 'Music') {
     bindMusicSearchEvents();
   }
 }

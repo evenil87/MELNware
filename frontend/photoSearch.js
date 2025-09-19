@@ -1,7 +1,7 @@
 // skapar en funktion som visar upp söksidan för bilder i frontend
 export function imageSearchPageContent() {
   return `
-      <h1>Photo Search</h1>
+      <h1>Search Photo</h1>
       <label>
         Search for: <select name="image-meta-field">
           <option value="all">All</option>
@@ -10,7 +10,7 @@ export function imageSearchPageContent() {
         </select>
       </label>
       <label>
-        <input name="image-search" type="text" placeholder="Search among image files">
+        <input name="image-search" type="text" placeholder="Search among photo files">
       </label>
       <section class="image-search-result"></section>
     `;
