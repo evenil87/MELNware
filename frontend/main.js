@@ -35,9 +35,6 @@ function showContent(label) {
   if (label === 'Start') {
     content = startPageContent();
   }
-  else if (label === 'Global Search') {
-    content = globalSearchPageContent();
-  }
   else if (label === 'Search PDF') {
     content = pdfSearchPageContent();
   }
@@ -49,6 +46,9 @@ function showContent(label) {
   }
   else if (label === 'Search PowerPoint') {
     content = powerPointSearchPageContent();
+  }
+  else if (label === 'Global Search') {
+    content = globalSearchPageContent();
   }
   document.querySelector('main').innerHTML = content;
 
