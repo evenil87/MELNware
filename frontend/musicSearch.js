@@ -13,7 +13,7 @@ export function musicSearchPageContent() {
       </select>
     </label>
     <label>
-      <input name="music-search" type="text" placeholder="Search amongst music files">
+      <input name="music-search" type="text" placeholder="Search among music files">
     </label>
     <section class="music-search-result"></section>
 
@@ -155,7 +155,10 @@ export function bindMusicSearchEvents() {
   if (!inputField || !selectField) return;
 
   inputField.addEventListener('keyup', musicSearch);
-  selectField.addEventListener('change', musicSearch);
+  selectField.addEventListener('change', () => {
+    inputField.value = '';   // Rensa söktexten
+    musicSearch();
+  });
 }
 
 // Utför musik-sökning

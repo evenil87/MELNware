@@ -564,6 +564,31 @@ label {
   background-color: #57779E;
 }
 
+#scrollTopBtn {
+  display: none;
+  /* dold från början */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: #57779E;
+  /* matcha din footer */
+  color: #fff;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 50%;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#scrollTopBtn:hover {
+  background-color: #AEAEAE;
+  /* samma hoverfärg som länkarna */
+  transform: translateY(-2px);
+}
+
 #greyish {
   color: rgb(69, 69, 69);
   font-size: 12px;

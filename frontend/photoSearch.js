@@ -1,7 +1,7 @@
 // skapar en funktion som visar upp söksidan för bilder i frontend
 export function imageSearchPageContent() {
   return `
-      <h1>Photo Search</h1>
+      <h1>Search Photo</h1>
       <label>
         Search for: <select name="image-meta-field">
           <option value="all">All</option>
@@ -10,7 +10,7 @@ export function imageSearchPageContent() {
         </select>
       </label>
       <label>
-        <input name="image-search" type="text" placeholder="Search among image files">
+        <input name="image-search" type="text" placeholder="Search among photo files">
       </label>
       <section class="image-search-result"></section>
     `;
@@ -31,7 +31,11 @@ document.body.addEventListener('keyup', event => {
 // Som är i närheten av en select med name=image-meta-field
 document.body.addEventListener('change', event => {
   let select = event.target.closest('select[name="image-meta-field"]');
-  if (!select) { return; }
+  if (!select) return;
+  // Rensa sökfältet när man ändrar i dropdown
+  const inputField = document.querySelector('input[name="image-search"]');
+  if (inputField) inputField.value = '';
+
   photoSearch();
 });
 

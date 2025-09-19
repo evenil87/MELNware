@@ -58,12 +58,13 @@ document.body.addEventListener('keyup', event => {
 
 // Ändring av fält
 document.body.addEventListener('change', event => {
-  if (event.target.closest('select[name="powerPointSearchField"]')) {
-    powerPointSearch();
-  }
-  if (event.target.closest('#advancedSearchFields')) {
-    powerPointSearch();
-  }
+  let select = event.target.closest('select[name="powerPointSearchField"]');
+  if (!select) return;
+  // Rensa sökfältet när man ändrar i dropdown
+  const inputField = document.querySelector('input[name="powerPointSearch"]');
+  if (inputField) inputField.value = '';
+
+  powerPointSearch();
 });
 
 document.body.addEventListener('click', event => {

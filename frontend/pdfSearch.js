@@ -12,7 +12,7 @@ export function pdfSearchPageContent() {
       </label>
 
       <label>
-        <input name="pdf-search" type="text" placeholder="Search">
+        <input name="pdf-search" type="text" placeholder="Search among PDF files">
       </label>
 
       <div class="search-controls-top">
@@ -70,6 +70,10 @@ document.body.addEventListener('keyup', event => {
 // Lyssna på ändringar i dropdowns och filters
 document.body.addEventListener('change', event => {
   if (event.target.matches('select[name="pdf-meta-field"]')) {
+    // Rensa sökfältet när man ändrar i dropdown
+    const inputField = document.querySelector('input[name="pdf-search"]');
+    if (inputField) inputField.value = '';
+
     pdfSearch();
   }
   if (event.target.matches('input[name="pdf-minPages"], input[name="pdf-maxPages"], input[name="pdf-fromDate"], input[name="pdf-toDate"]')) {
