@@ -3,13 +3,15 @@ export function startPageContent() {
   <br>  
   <h1>Welcome to MELNware!</h1>
     <p><i>A search engine built by students in Data Managment of TUC Yrkeshögskola.</i></p><br>
-    <p>Use the menu above to navigate to the different search pages, where you can search through different files such as Photos, PDF, Music and PowerPoint. All search pages have a dropdown menu where you can select which metadata field to search through, and a text input field where you can type your search query. The search results will be displayed below the input field, and will update automatically as you type or change the selected metadata field.</p>
+    <p>Use the menu above to navigate to the different search pages, where you can search through different files such as Photos, PDF, Music and PowerPoint. All search pages have a dropdown menu where you can select which metadata field to search through, a text input field where you can type your search query and you can download any chosen file. The search results will be displayed below the input field, and will update automatically as you type or change the selected metadata field.</p>
 
     <ul>
-    <li>On the <b>Search Photo</b>-page you can search through a collection of image files, search through creator and filename. Don't forget to click the images to see where in the world the image is taken!</li>
-    <li>On the <b>Search PDF</b>-page you can search through a collection of PDF files, search through title, author and content.</li>
-    <li>On the <b>Search Music</b>-page you can search through a collection of music files, search through artist, album, title, genere and year. And of course you can play the music directly in the browser.</li>
-    <li>On the <b>Search PowerPoint</b>-page you can search through a collection of PowerPoint files, search through title, author and content.</li>
+    <li>On the <b>Photo</b>-page you can search through a collection of image files, search through creator and filename. Don't forget to click the images to see where in the world the image is taken!</li>
+    <li>On the <b>PDF</b>-page you can search through a collection of PDF files, search through title, author and text. You can even do an advanced search filtering with sorting included.</li>
+    <li>On the <b>Music</b>-page you can search through a collection of music files, search through artist, album, title and genre. And of course you can play the music directly in the browser.</li>
+    <li>On the <b>PowerPoint</b>-page you can search through a collection of PowerPoint files, search through title, creator and creation date. Here you can also do a more advanced search.</li>
+    <li>On the <b>Global Search</b>-page, which is not a finished feature, you will be able to search through all file types at once. At the moment the result will only show how many matches you get in your search.</li>
+    </li>
     </ul><br>
 
     <p><i>Enjoy your stay!</i></p>
