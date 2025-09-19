@@ -31,7 +31,11 @@ document.body.addEventListener('keyup', event => {
 // Som är i närheten av en select med name=image-meta-field
 document.body.addEventListener('change', event => {
   let select = event.target.closest('select[name="image-meta-field"]');
-  if (!select) { return; }
+  if (!select) return;
+  // Rensa sökfältet när man ändrar i dropdown
+  const inputField = document.querySelector('input[name="image-search"]');
+  if (inputField) inputField.value = '';
+
   photoSearch();
 });
 

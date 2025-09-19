@@ -155,7 +155,10 @@ export function bindMusicSearchEvents() {
   if (!inputField || !selectField) return;
 
   inputField.addEventListener('keyup', musicSearch);
-  selectField.addEventListener('change', musicSearch);
+  selectField.addEventListener('change', () => {
+    inputField.value = '';   // Rensa söktexten
+    musicSearch();
+  });
 }
 
 // Utför musik-sökning
